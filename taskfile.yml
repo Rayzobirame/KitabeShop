@@ -1,8 +1,8 @@
 version: '3'
 vars:
   GOOS: "{{default OS .GOOS}}"
-  # Chemin relatif vers mvnw, ajusté selon Windows ou Unix
-  MVNW: '{{if eq .GOOS "windows"}}.\mvnw.cmd{{else}}./mvnw{{end}}'
+  # Utiliser simplement "mvnw" sans le point ou le chemin
+  MVNW: '{{if eq .GOOS "windows"}}mvnw.cmd{{else}}./mvnw{{end}}'
   DC_DIR: "deployment/docker-compose"
   INFRA_DC_FILE: "{{.DC_DIR}}/infra.yml"
 
@@ -24,11 +24,6 @@ tasks:
     cmds:
       - "{{.MVNW}} verify"
 
-  run:
-    desc: "Démarre l'application"
-    cmds:
-      - "{{.MVNW}} spring-boot:run"
-
   start_infra:
     cmds:
       - docker compose -f "{{.INFRA_DC_FILE}}" up -d
@@ -39,7 +34,6 @@ tasks:
       - docker compose -f "{{.INFRA_DC_FILE}}" rm -f
 
   restart_infra:
-    desc: "Mecanisme d'arret et de redemarrage"
     cmds:
       - task: stop_infra
       - task: sleep
@@ -47,6 +41,6 @@ tasks:
 
   sleep:
     vars:
-      DURATION: '{{default "5" .DURATION}}'
+      DURATION: '{{default 5 .DURATION}}'
     cmds:
       - sleep {{.DURATION}}
