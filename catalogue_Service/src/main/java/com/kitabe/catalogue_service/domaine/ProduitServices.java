@@ -21,12 +21,22 @@ public class ProduitServices {
         this.applicationProperties = applicationProperties;
     }
 
+    /**
+     * Récupère une liste paginée de produits triés par nom.
+     * @param pageNo Numéro de la page demandée (commence à 1 pour l'utilisateur).
+     * @return PagedResult contenant les produits et les métadonnées de pagination.
+     */
     public PagedResult<Produit> getProduit(int pageNo){
+        //Crée un objet Sort qui définit un tri par ordre croissant (ascending) sur le champ nom par ordre alphabetique
         Sort sort = Sort.by("nom").ascending();
+        // Ajuste pageNo : utilisateur commence à 1, Spring à 0
         pageNo = pageNo <=1 ? 0 : pageNo - 1;
+        // Crée un objet Pageable pour la pagination et le tri
         Pageable pageable = PageRequest.of(pageNo, applicationProperties.pageSize(),sort);
+        // Récupère une page de produits depuis le repository et les mappe en objets Produit
         Page<Produit> produitPage = repo.findAll(pageable).map(ProduitWrapper::toProduit);
 
+        // Retourne un résultat paginé avec les données et métadonnées
         return new PagedResult<>(
                 produitPage.getContent(),
                 produitPage.getTotalElements(),

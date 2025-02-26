@@ -16,12 +16,21 @@ class ProduitsController {
 
     private final ProduitServices produitServices;
 
+    /**
+     * Constructeur pour l'injection du service ProduitServices.
+     * @param produitServices Service pour les opérations sur les produits.
+     */
     ProduitsController(ProduitServices produitServices) {
         this.produitServices = produitServices;
     }
 
+    /**
+     * Récupère une liste paginée de produits via une requête GET.
+     * @param pageNum Numéro de page (défaut 1 si non spécifié).
+     * @return PagedResult avec les produits et métadonnées de pagination.
+     */
     @GetMapping
     PagedResult<Produit> getProduits(@RequestParam(name = "page", defaultValue = "1") int pageNum ){
-        return produitServices.getProduit(pageNum);
+        return produitServices.getProduit(pageNum); // Délègue au service
     }
 }
