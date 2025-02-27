@@ -35,13 +35,12 @@ public class ProduitServices {
         Pageable pageable = PageRequest.of(pageNo, applicationProperties.pageSize(),sort);
         // Récupère une page de produits depuis le repository et les mappe en objets Produit
         Page<Produit> produitPage = repo.findAll(pageable).map(ProduitWrapper::toProduit);
-
         // Retourne un résultat paginé avec les données et métadonnées
         return new PagedResult<>(
                 produitPage.getContent(),
                 produitPage.getTotalElements(),
                 produitPage.getTotalPages(),
-                produitPage.getNumber() +1,
+                produitPage.getNumber() + 1,
                 produitPage.isFirst(),
                 produitPage.isLast(),
                 produitPage.hasNext(),
