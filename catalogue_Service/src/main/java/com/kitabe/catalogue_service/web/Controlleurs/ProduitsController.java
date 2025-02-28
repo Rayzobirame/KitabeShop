@@ -2,11 +2,10 @@ package com.kitabe.catalogue_service.web.Controlleurs;
 
 import com.kitabe.catalogue_service.domaine.PagedResult;
 import com.kitabe.catalogue_service.domaine.Produit;
+import com.kitabe.catalogue_service.domaine.ProduitNotFoundException;
 import com.kitabe.catalogue_service.domaine.ProduitServices;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,5 +31,12 @@ class ProduitsController {
     @GetMapping
     PagedResult<Produit> getProduits(@RequestParam(name = "page", defaultValue = "1") int pageNum ){
         return produitServices.getProduit(pageNum); // Délègue au service
+    }
+
+
+    @GetMapping("/{code}")
+    ResponseEntity<Produit> getProduitByCode(@PathVariable String code){
+        return produitServices.getProduitByCode(code).map(ResponseEntity::ok).
+                orElseThrow(() ->ProduitNotFoundException.forCode(code));
     }
 }

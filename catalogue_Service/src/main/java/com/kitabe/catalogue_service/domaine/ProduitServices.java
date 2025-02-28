@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -46,5 +47,11 @@ public class ProduitServices {
                 produitPage.hasNext(),
                 produitPage.hasPrevious()
         );
+    }
+
+    /*l’utilisation de .map(ProduitWrapper::toProduit) dans ta méthode getProduitByCode
+    vise à éviter d’exposer directement ton entité JPA (ProduitEntite) en dehors de la couche de persistence.*/
+    public Optional<Produit> getProduitByCode(String code){
+        return repo.findByCode(code).map(ProduitWrapper::toProduit);
     }
 }
