@@ -18,6 +18,7 @@
     </properties>
     <modules>
         <module>catalogue_service</module>
+        <module>commande_service</module>
     </modules>
     <build>
         <plugins>
