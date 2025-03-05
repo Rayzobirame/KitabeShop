@@ -1,4 +1,4 @@
-name: Catalogue Service CI/CD
+name: Commande Service CI/CD
 
 on:
   push:

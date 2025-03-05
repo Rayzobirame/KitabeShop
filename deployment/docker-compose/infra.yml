@@ -18,3 +18,41 @@ services:
       resources:
         limits:
           memory: 500m
+
+  commande_db:
+    image: postgres:16-alpine
+    container_name: commande_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "25432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 500m
+
+  kitabe_rabbitmq:
+    image: rabbitmq:3.12.11-management
+    container_name: kitabe_rabbitmq
+    environment:
+      - RABBIT_MQ_USER=guest
+      - RABBIT_MQ_PASSWORD=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbit_mq_diagnostics check_port_connectivity
+      interval: 30s
+      timeout: 30s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 500m
