@@ -1,13 +1,17 @@
-package com.kitabe.commande_service.web.controlleurs.exceptions;
+package com.kitabe.commande_service.web.exceptions;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.kitabe.commande_service.domaine.CommandeNotFoundException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
+import jakarta.annotation.Nullable;
+import org.springframework.http.*;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 /*La classe GlobaleExeptionHandler est annotée avec @RestControllerAdvice, ce qui en fait un gestionnaire
@@ -19,6 +23,7 @@ Le but est d’assurer que les erreurs (comme un produit non trouvé ou une erre
 @RestControllerAdvice
 public class GlobaleHandlerException extends ResponseEntityExceptionHandler {
     public static final URI NOT_FOUND_TYPE = URI.create("https://ap.kitabeshop.com/errors/not-found");
+    public static final URI BAD_REQUEST_TYPE = URI.create("https://ap.kitabeshop.com/errors/bad-request");
     public static final URI ISE_FOUND_TYPE = URI.create("https://ap.kitabeshop.com/errors/server-error");
     public static final String SERVICE_NAME = "commande_service";
 
@@ -63,5 +68,22 @@ public class GlobaleHandlerException extends ResponseEntityExceptionHandler {
         problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;
     }
+
+    @Nullable
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        List<String> errors = new ArrayList<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Requete payload invalide");
+        problemDetail.setTitle("Bad Request");
+        problemDetail.setType(BAD_REQUEST_TYPE);
+        problemDetail.setProperty("erreur", errors);
+        problemDetail.setProperty("service", SERVICE_NAME);
+        problemDetail.setProperty("erreur_categorie", "Validation");
+        problemDetail.setProperty("timestamp", Instant.now());
+        return new ResponseEntity<>(problemDetail, HttpStatus.BAD_REQUEST);
+    }
+
 }
 
