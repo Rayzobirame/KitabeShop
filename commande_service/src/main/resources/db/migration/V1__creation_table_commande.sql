@@ -37,6 +37,6 @@ create table commande_item(
 );
 
 -- Index pour améliorer les recherches
-CREATE INDEX idx_commandes_commande_id ON commandes(commande_id);
+CREATE INDEX idx_commandes_commande_id ON commandes(id);
 CREATE INDEX idx_commandes_client_email ON commandes(client_email);
 CREATE INDEX idx_commande_item_commande_id ON commande_item(commande_id);
