@@ -14,7 +14,7 @@ public class CommandeMapper {
         commandeNouvelle.setCommandeNum(UUID.randomUUID().toString());
         commandeNouvelle.setStatus(CommandeStatus.NOUVEAU);
         commandeNouvelle.setClient(creerCommandeRequest.client());
-        commandeNouvelle.setAddresseLivraison(creerCommandeRequest.livraisonAddresse());
+        commandeNouvelle.setLivraisonAddresse(creerCommandeRequest.livraisonAddresse());
         Set<CommandeItemsEntite> commandeItems = new HashSet<>();
         for(CommandeItems items : creerCommandeRequest.items()){
             CommandeItemsEntite commandeItem = new CommandeItemsEntite();

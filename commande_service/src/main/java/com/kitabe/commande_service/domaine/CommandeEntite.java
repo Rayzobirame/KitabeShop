@@ -47,7 +47,7 @@ public class CommandeEntite {
                     @AttributeOverride(name = "ville",column = @Column(name = "livraison_ville")),
             }
     )
-    private Addresse addresseLivraison;
+    private Addresse livraisonAddresse;
 
     @Enumerated(EnumType.STRING)
     private CommandeStatus status;
@@ -101,12 +101,12 @@ public class CommandeEntite {
         this.client = client;
     }
 
-    public Addresse getAddresseLivraison() {
-        return addresseLivraison;
+    public Addresse getLivraisonAddresse() {
+        return livraisonAddresse;
     }
 
-    public void setAddresseLivraison(Addresse addresseLivraison) {
-        this.addresseLivraison = addresseLivraison;
+    public void setLivraisonAddresse(Addresse livraisonAddresse) {
+        this.livraisonAddresse = livraisonAddresse;
     }
 
     public CommandeStatus getStatus() {
