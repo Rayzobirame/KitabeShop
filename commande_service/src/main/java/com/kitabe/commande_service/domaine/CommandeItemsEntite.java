@@ -19,7 +19,7 @@ public class CommandeItemsEntite {
     private String code;
 
    @Column(nullable = false)
-   private BigDecimal prix;
+   private Double prix;
 
    @Column(nullable = false)
    private Integer quantite;
@@ -52,11 +52,11 @@ public class CommandeItemsEntite {
         this.code = code;
     }
 
-    public BigDecimal getPrix() {
+    public Double getPrix() {
         return prix;
     }
 
-    public void setPrix(BigDecimal prix) {
+    public void setPrix(Double prix) {
         this.prix = prix;
     }
 

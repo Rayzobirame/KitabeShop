@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+import static com.kitabe.commande_service.web.utils.TestDataFactory.creerRequestCommandeAvecClientInvalide;
 import static io.restassured.RestAssured.given; // Ajout de l'import manquant
 import static org.hamcrest.Matchers.notNullValue; // Import corrigé (sans shaded)
 import static org.junit.jupiter.api.Assertions.*; // Import inutilisé, mais conservé pour d'autres tests futurs
@@ -66,7 +67,7 @@ class CommandeControllerTest extends AbstractIT {
 
         @Test
         void shouldretourbadRequestWhenMandatoryDataIsMissing(){
-            var payload = com.kitabe.commande_service.web.controlleurs.utils.TestDataFactory.creerRequestCommandeAvecClientInvalide();
+            var payload = creerRequestCommandeAvecClientInvalide();
             given()
                     .contentType(ContentType.JSON) // Définit le type de contenu comme JSON
                     .body(payload)                // Envoie le payload JSON
