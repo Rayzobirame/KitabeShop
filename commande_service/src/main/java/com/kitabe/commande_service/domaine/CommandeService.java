@@ -13,14 +13,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CommandeService {
     private final CommandeRepository commandeRepository;
+    private CommandeValidateur validateur;
     private static final Logger log = LoggerFactory.getLogger(CommandeService.class);
 
-    public CommandeService(CommandeRepository commandeRepository) {
+    public CommandeService(CommandeRepository commandeRepository, CommandeValidateur validateur) {
         this.commandeRepository = commandeRepository;
+        this.validateur = validateur;
     }
 
 
     public CreerCommandeResponse creerCommande(String username, CreerCommandeRequest createCommandeRequest) {
+        validateur.validateur(createCommandeRequest);
         CommandeEntite nouvelleCommande = CommandeMapper.convertToEntite(createCommandeRequest);
         nouvelleCommande.setPseudo(username);
         CommandeEntite savedCommande = this.commandeRepository.save(nouvelleCommande);
