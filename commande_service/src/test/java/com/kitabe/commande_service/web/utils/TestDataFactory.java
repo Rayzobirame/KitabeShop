@@ -7,6 +7,7 @@ import com.kitabe.commande_service.domaine.model.CreerCommandeRequest;
 import org.instancio.Instancio;
 import org.instancio.Select;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -24,9 +25,9 @@ public class TestDataFactory {
     /** Liste de pays valides pour les adresses de livraison. */
     static final List<String> PAYS_VALIDES = List.of("Senegal", "France", "Etat-Unis");
     /** Ensemble d'items valides pour une commande. */
-    static final Set<CommandeItems> COMMANDE_VALIDES = Set.of(new CommandeItems("392", "Lait", 29.9, 2));
+    static final Set<CommandeItems> COMMANDE_VALIDES = Set.of(new CommandeItems("392", "Lait", new BigDecimal ("29.9") ,2));
     /** Ensemble d'items invalides ou utilisé comme référence dans certains cas de test. */
-    static final Set<CommandeItems> COMMANDE_INVALIDES = Set.of(new CommandeItems("103", "Livres", 22.0, 3));
+    static final Set<CommandeItems> COMMANDE_INVALIDES = Set.of(new CommandeItems("103", "Livres", new BigDecimal ("22.0"),3));
 
     /**
      * Crée une requête valide pour une commande.

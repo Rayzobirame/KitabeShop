@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.kitabe.commande_service.domaine.CommandeNotFoundException;
+import com.kitabe.commande_service.domaine.model.InvalideCommandeException;
 import jakarta.annotation.Nullable;
 import org.springframework.http.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -63,6 +64,17 @@ public class GlobaleHandlerException extends ResponseEntityExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problemDetail.setTitle("Commande non retrouvé");
         problemDetail.setType(NOT_FOUND_TYPE);
+        problemDetail.setProperty("service", SERVICE_NAME);
+        problemDetail.setProperty("erreur_categorie", "generic");
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(InvalideCommandeException.class)
+    ProblemDetail handleCommandeNotValidException(InvalideCommandeException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problemDetail.setTitle("La requete pour cette commande est invalide");
+        problemDetail.setType(BAD_REQUEST_TYPE);
         problemDetail.setProperty("service", SERVICE_NAME);
         problemDetail.setProperty("erreur_categorie", "generic");
         problemDetail.setProperty("timestamp", Instant.now());
