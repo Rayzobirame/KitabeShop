@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+import java.math.BigDecimal;
+
 import static com.kitabe.commande_service.web.utils.TestDataFactory.creerRequestCommandeAvecClientInvalide;
 import static io.restassured.RestAssured.given; // Ajout de l'import manquant
 import static org.hamcrest.Matchers.notNullValue; // Import corrigé (sans shaded)
@@ -26,6 +28,7 @@ class CommandeControllerTest extends AbstractIT {
          */
         @Test
         void creerCommandeAvecSucces() {
+            mockGetProduitByCode("LIV-SCI-003","Neuromancien",new BigDecimal("13.25"));
             // Payload JSON pour la création d'une commande
             var payload = """
                     {
@@ -45,9 +48,9 @@ class CommandeControllerTest extends AbstractIT {
                         },
                         "items": [
                             {
-                                "code": "P393",
-                                "nom": "Chaussures",
-                                "prix": 30.0,
+                                "code": "LIV-SCI-003",
+                                "nom": "Neuromancien",
+                                "prix": 13.25,
                                 "quantite": 2
                             }
                         ]

@@ -1,13 +1,19 @@
 package com.kitabe.commande_service.clients.catalogue;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kitabe.commande_service.ApplicationProperties;
 
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestClient;
 
 import java.time.Duration;
@@ -43,15 +49,20 @@ public class CatalogueServiceClientConfig {
             throw new IllegalStateException("Catalogue service URL is not set");
         }
         logger.info("Catalogue service URL: " + baseurl);
-        // Créez un SimpleClientHttpRequestFactory avec les timeouts configurés
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout((int) Duration.ofSeconds(5).toMillis()); // Timeout de connexion : 5 secondes
-        factory.setReadTimeout((int) Duration.ofSeconds(5).toMillis());    // Timeout de lecture : 5 secondes
+        // Configurer les timeouts
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(Timeout.ofDays(Duration.ofSeconds(5).toMillisPart()))
+                .setResponseTimeout(Timeout.ofDays(Duration.ofSeconds(5).toMillisPart()))
+                .build();
+
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(
+                HttpClients.custom().setDefaultRequestConfig(requestConfig).build()
+        );
 
         // Créez le RestClient avec le RequestFactory configuré
         return RestClient.builder()
                 .baseUrl(baseurl)
-                .requestFactory(factory) // Appliquez le RequestFactory personnalisé
+                .requestFactory(factory)
                 .build();
     }
 }

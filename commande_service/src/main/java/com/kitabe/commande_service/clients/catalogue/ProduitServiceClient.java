@@ -3,6 +3,7 @@ package com.kitabe.commande_service.clients.catalogue;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 
 import java.util.Optional;
@@ -21,15 +22,18 @@ public class ProduitServiceClient {
     @CircuitBreaker(name = "catalogue_service")
     @Retry(name="catalogue_service",fallbackMethod = "getProduitByCodeFallBack")
     public Optional<Produit> getProduitByCode(String code) {
-        logger.info("Fetching produit by code: {}" ,code);
-           var produit = restClient.get().uri("/api/produits/{code}", code)
-                   .retrieve()
-                   .body(Produit.class);
-           return Optional.ofNullable(produit);
+        logger.info("Fetching produit by code: {}", code);
+            Produit produit = restClient.get()
+                    .uri("/api/produits/{code}", code)
+                    .retrieve()
+                    .body(Produit.class);
+            logger.info("Successfully fetched produit: {}", produit);
+            return Optional.ofNullable(produit);
 
-     }
-    Optional<Produit> getProduitByCodeFallBack(String code,Throwable throwable) {
-        System.out.println("ProduitServiceClient.getProduitByCodefallBack : code :" + code);
+    }
+
+    public Optional<Produit> getProduitByCodeFallBack(String code, Throwable t) {
+        logger.error("Fallback triggered for getProduitByCode with code {}: {}", code, t.getMessage(), t);
         return Optional.empty();
     }
 }
