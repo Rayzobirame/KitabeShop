@@ -1,6 +1,7 @@
 package com.kitabe.commande_service.domaine;
 
 import com.kitabe.commande_service.domaine.model.CommandeMapper;
+import com.kitabe.commande_service.domaine.model.CreerCommandeEvenement;
 import com.kitabe.commande_service.domaine.model.CreerCommandeRequest;
 import com.kitabe.commande_service.domaine.model.CreerCommandeResponse;
 
@@ -14,11 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommandeService {
     private final CommandeRepository commandeRepository;
     private CommandeValidateur validateur;
+    private CommandeEvenementService evenementService;
     private static final Logger log = LoggerFactory.getLogger(CommandeService.class);
 
-    public CommandeService(CommandeRepository commandeRepository, CommandeValidateur validateur) {
+    public CommandeService(CommandeRepository commandeRepository, CommandeValidateur validateur, CommandeEvenementService evenementService) {
         this.commandeRepository = commandeRepository;
         this.validateur = validateur;
+        this.evenementService = evenementService;
     }
 
 
@@ -28,6 +31,8 @@ public class CommandeService {
         nouvelleCommande.setPseudo(username);
         CommandeEntite savedCommande = this.commandeRepository.save(nouvelleCommande);
         log.info("Une nouvelle commande a été creer avec : " + savedCommande.getCommandeNum());
+        CreerCommandeEvenement commandeCreerEvenement = CommandeEvenementMapper.buildCommandeCreerSurEvenement(savedCommande);
+        evenementService.save(commandeCreerEvenement);
         return new CreerCommandeResponse(savedCommande.getCommandeNum());
     }
 }
