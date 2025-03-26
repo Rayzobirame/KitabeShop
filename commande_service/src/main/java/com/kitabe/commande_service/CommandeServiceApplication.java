@@ -1,7 +1,6 @@
 package com.kitabe.commande_service;
 
 import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
-import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -15,5 +14,4 @@ public class CommandeServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(CommandeServiceApplication.class, args);
     }
-
 }
