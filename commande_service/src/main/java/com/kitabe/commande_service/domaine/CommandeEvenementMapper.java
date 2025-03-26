@@ -1,7 +1,6 @@
 package com.kitabe.commande_service.domaine;
 
-import com.kitabe.commande_service.domaine.model.CommandeItems;
-import com.kitabe.commande_service.domaine.model.CreerCommandeEvenement;
+import com.kitabe.commande_service.domaine.model.*;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -9,9 +8,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * Mappe les entités de commande en événements de création de commande.
- * Cette classe utilitaire est utilisée pour transformer une entité {@link CommandeEntite} en un événement
- * {@link CreerCommandeEvenement} qui peut être publié ou traité.
+ * Mappe les entités de commande en différents types d'événements de commande.
+ * Cette classe utilitaire est utilisée pour transformer une entité {@link CommandeEntite} en divers événements
+ * tels que {@link CreerCommandeEvenement}, {@link CommandeDelivrerEvenement}, {@link CommandeErreurEvenement},
+ * ou {@link CommandeAnnuleeEvenement}, qui peuvent ensuite être publiés ou traités.
  */
 public class CommandeEvenementMapper {
 
@@ -30,6 +30,63 @@ public class CommandeEvenementMapper {
                 getCommandeItems(commande),
                 commande.getClient(),
                 commande.getLivraisonAddresse(),
+                LocalDateTime.now());
+    }
+
+    /**
+     * Construit un événement de livraison de commande à partir d'une entité de commande.
+     * Cette méthode génère un événement avec un identifiant unique pour indiquer qu'une commande a été livrée,
+     * en utilisant les données de l'entité {@link CommandeEntite}.
+     *
+     * @param commande L'entité de commande ({@link CommandeEntite}) à transformer en événement.
+     * @return Un événement de livraison de commande ({@link CommandeDelivrerEvenement}) prêt à être publié.
+     */
+    static CommandeDelivrerEvenement buildCommandeDelivrerEvenement(CommandeEntite commande){
+        return new CommandeDelivrerEvenement(
+                UUID.randomUUID().toString(),
+                commande.getCommandeNum(),
+                getCommandeItems(commande),
+                commande.getClient(),
+                commande.getLivraisonAddresse(),
+                LocalDateTime.now());
+    }
+
+    /**
+     * Construit un événement d'erreur de commande à partir d'une entité de commande et d'une raison d'erreur.
+     * Cette méthode génère un événement avec un identifiant unique pour signaler une erreur lors du traitement
+     * de la commande, en incluant la raison de l'échec.
+     *
+     * @param commande L'entité de commande ({@link CommandeEntite}) à transformer en événement.
+     * @param raison   La raison de l'échec du traitement de la commande.
+     * @return Un événement d'erreur de commande ({@link CommandeErreurEvenement}) prêt à être publié.
+     */
+    static CommandeErreurEvenement buildCommandeErreurEvenement(CommandeEntite commande, String raison){
+        return new CommandeErreurEvenement(
+                UUID.randomUUID().toString(),
+                commande.getCommandeNum(),
+                getCommandeItems(commande),
+                commande.getClient(),
+                commande.getLivraisonAddresse(),
+                raison,
+                LocalDateTime.now());
+    }
+    /**
+     * Construit un événement d'annulation de commande à partir d'une entité de commande et d'une raison d'annulation.
+     * Cette méthode génère un événement avec un identifiant unique pour indiquer qu'une commande a été annulée,
+     * en incluant la raison de l'annulation.
+     *
+     * @param commande L'entité de commande ({@link CommandeEntite}) à transformer en événement.
+     * @param raison   La raison de l'annulation de la commande.
+     * @return Un événement d'annulation de commande ({@link CommandeAnnuleeEvenement}) prêt à être publié.
+     */
+    static CommandeAnnuleeEvenement buildCommandeAnnuleeEvenement(CommandeEntite commande, String raison){
+        return new CommandeAnnuleeEvenement(
+                UUID.randomUUID().toString(),
+                commande.getCommandeNum(),
+                getCommandeItems(commande),
+                commande.getClient(),
+                commande.getLivraisonAddresse(),
+                raison,
                 LocalDateTime.now());
     }
 
