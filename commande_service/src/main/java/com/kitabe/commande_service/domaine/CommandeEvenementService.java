@@ -2,7 +2,7 @@ package com.kitabe.commande_service.domaine;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kitabe.commande_service.domaine.model.CreerCommandeEvenement;
+import com.kitabe.commande_service.domaine.model.*;
 import com.kitabe.commande_service.web.controlleurs.CommandeController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +91,18 @@ public class CommandeEvenementService {
                CreerCommandeEvenement creerCommandeEvenement = fromJsonPayload(evenement.getPayload(), CreerCommandeEvenement.class);
               commandeEvenementPublish.publish(creerCommandeEvenement);
               break;
+           case COMMANDE_DELIVREE:
+               CommandeDelivrerEvenement commandeDelivrerEvenement = fromJsonPayload(evenement.getPayload(), CommandeDelivrerEvenement.class);
+               commandeEvenementPublish.publish(commandeDelivrerEvenement);
+               break;
+           case COMMANDE_ANNULEE:
+               CommandeAnnuleeEvenement commandeAnnuleeEvenement = fromJsonPayload(evenement.getPayload(),CommandeAnnuleeEvenement.class);
+               commandeEvenementPublish.publish(commandeAnnuleeEvenement);
+               break;
+           case COMMANDE_ECHEC_PROCESSUS:
+               CommandeErreurEvenement commandeErreurEvenement = fromJsonPayload(evenement.getPayload(),CommandeErreurEvenement.class);
+               commandeEvenementPublish.publish(commandeErreurEvenement);
+               break;
            default:
                log.warn("Type devenement commande inconnu:{}", evenementType);
        }
@@ -113,19 +125,34 @@ public class CommandeEvenementService {
     }
 
     /**
-     * Crée et persiste un événement de création de commande.
-     * Cette méthode transforme un événement {@link CreerCommandeEvenement} en une entité {@link CommandeEvenementEntite}
-     * et l'enregistre dans la base de données via le repository.
+     * Enregistre un événement de commande dans la base de données.
+     * Cette méthode persiste un événement de commande (de n'importe quel type implémentant {@link CommandeEvenement})
+     * en le transformant en une entité {@link CommandeEvenementEntite}. Elle détermine dynamiquement le type
+     * d'événement ({@link CommandeEvenementType}) en fonction de l'instance de l'événement fourni.
      *
-     * @param evenement L'événement de création de commande à persister.
+     * @param evenement L'événement de commande à enregistrer (doit implémenter {@link CommandeEvenement}).
+     * @throws IllegalArgumentException Si le type d'événement n'est pas supporté.
      */
-    public void save(CreerCommandeEvenement commandeCreerEvenement) {
+    public void save(CommandeEvenement evenement) {
         CommandeEvenementEntite commandeEvenementEntite = new CommandeEvenementEntite();
-        commandeEvenementEntite.setEvenementId(commandeCreerEvenement.evenementId());
-        commandeEvenementEntite.setEvenementType(CommandeEvenementType.COMMANDE_CREER);
-        commandeEvenementEntite.setCommandeNum(commandeCreerEvenement.commandeNum());
-        commandeEvenementEntite.setCreerLe(commandeCreerEvenement.creerLe());
-        commandeEvenementEntite.setPayload(toJsonPayload(commandeCreerEvenement));
+        commandeEvenementEntite.setEvenementId(evenement.evenementId());
+        commandeEvenementEntite.setCommandeNum(evenement.commandeNum());
+        commandeEvenementEntite.setCreerLe(evenement.creerLe());
+        commandeEvenementEntite.setPayload(toJsonPayload(evenement));
+
+        // Déterminer le type d'événement en fonction de l'instance
+        if (evenement instanceof CreerCommandeEvenement) {
+            commandeEvenementEntite.setEvenementType(CommandeEvenementType.COMMANDE_CREER);
+        } else if (evenement instanceof CommandeDelivrerEvenement) {
+            commandeEvenementEntite.setEvenementType(CommandeEvenementType.COMMANDE_DELIVREE);
+        } else if (evenement instanceof CommandeAnnuleeEvenement) {
+            commandeEvenementEntite.setEvenementType(CommandeEvenementType.COMMANDE_ANNULEE);
+        } else if (evenement instanceof CommandeErreurEvenement) {
+            commandeEvenementEntite.setEvenementType(CommandeEvenementType.COMMANDE_ECHEC_PROCESSUS);
+        } else {
+            throw new IllegalArgumentException("Type d'événement non supporté : " + evenement.getClass().getName());
+        }
+
         this.commandeEvenementRepository.save(commandeEvenementEntite);
     }
 }
