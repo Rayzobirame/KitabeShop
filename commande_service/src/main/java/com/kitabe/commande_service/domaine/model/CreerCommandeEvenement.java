@@ -24,5 +24,5 @@ public record CreerCommandeEvenement(
         Client client,
         Addresse addresse,
         LocalDateTime creerLe
-) {
+) implements CommandeEvenement{
 }
