@@ -1,6 +1,9 @@
 package com.kitabe.commande_service.domaine;
 
 import com.kitabe.commande_service.ApplicationProperties;
+import com.kitabe.commande_service.domaine.model.CommandeAnnuleeEvenement;
+import com.kitabe.commande_service.domaine.model.CommandeDelivrerEvenement;
+import com.kitabe.commande_service.domaine.model.CommandeErreurEvenement;
 import com.kitabe.commande_service.domaine.model.CreerCommandeEvenement;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
@@ -34,6 +37,15 @@ public class CommandeEvenementPublisher {
      */
     public void publish(CreerCommandeEvenement evenement){
         this.send(properties.nouvelleCommandeQueue(), evenement);
+    }
+    public void publish(CommandeDelivrerEvenement evenement){
+        this.send(properties.delivranceCommandeQueue(), evenement);
+    }
+    public void publish(CommandeAnnuleeEvenement evenement){
+        this.send(properties.annulationCommandeQueue(), evenement);
+    }
+    public void publish(CommandeErreurEvenement evenement){
+        this.send(properties.erreurCommandeQueue(), evenement);
     }
     /**
      * Envoie un message à RabbitMQ avec une clé de routage et une charge utile (payload).
