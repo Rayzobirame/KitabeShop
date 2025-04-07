@@ -1,9 +1,6 @@
 package com.kitabe.commande_service.domaine;
 
-import com.kitabe.commande_service.domaine.model.CommandeMapper;
-import com.kitabe.commande_service.domaine.model.CreerCommandeEvenement;
-import com.kitabe.commande_service.domaine.model.CreerCommandeRequest;
-import com.kitabe.commande_service.domaine.model.CreerCommandeResponse;
+import com.kitabe.commande_service.domaine.model.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -116,5 +114,23 @@ public class CommandeService {
      */
     private boolean peutEtreDelivrer(CommandeEntite commandes) {
         return LIST_PAYS_AUTORISER_POUR_LIVRAISON.contains(commandes.getLivraisonAddresse().pays().toUpperCase());
+    }
+
+    public List<CommandeSommaire> trouveCommande(String pseudo){
+       return commandeRepository.findByPseudo(pseudo);
+
+    }
+
+    /**
+     * Recherche une commande spécifique pour un utilisateur donné et la convertit en DTO.
+     * Cette méthode récupère une commande en fonction du pseudo de l'utilisateur et du numéro de commande,
+     * puis la transforme en {@link CommandeDTO} pour une utilisation dans la couche de présentation.
+     *
+     * @param username    Le pseudo de l'utilisateur associé à la commande.
+     * @param commandeNum Le numéro unique de la commande à rechercher.
+     * @return Un {@link Optional} contenant le {@link CommandeDTO} si la commande existe, ou vide sinon.
+     */
+    public Optional<CommandeDTO> trouveCommandeClient(String username, String commandeNum) {
+        return commandeRepository.findByPseudoAndCommandeNum(username,commandeNum).map(CommandeMapper::convertToDTO);
     }
 }
