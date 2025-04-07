@@ -7,6 +7,6 @@ CREATE TABLE commande_evenements(
                               evenement_type          text      NOT NULL,
                               payload                 text      NOT NULL,
                               creation_date              timestamp  NOT NULL ,
-                              update_le              timestamp,
+                              date_modification              timestamp,
                             primary key (id)
 );
