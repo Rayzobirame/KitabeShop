@@ -105,7 +105,7 @@ class CommandeControllerTest extends AbstractIT {
         /**
          * Vérifie que l'endpoint GET /api/commande retourne avec succès un sommaire des commandes.
          * Ce test simule une requête GET pour récupérer les commandes d'un utilisateur authentifié
-         * et vérifie que la réponse a un code de statut 200 et contient exactement 2 commandes.
+         * et vérifie que la réponse a un code de statut 200 et contient exactement 4 commandes.
          * Les données de test sont insérées via Flyway (V2__insert_test_data.sql).
          */
         @Test
