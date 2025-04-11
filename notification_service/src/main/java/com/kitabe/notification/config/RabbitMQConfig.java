@@ -1,7 +1,7 @@
-package com.kitabe.commande_service.config;
+package com.kitabe.notification.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kitabe.commande_service.ApplicationProperties;
+import com.kitabe.notification.ApplicationProperties;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
