@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
@@ -9,6 +10,7 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/catalogue_Service/pom.xml" />
         <option value="$PROJECT_DIR$/commande_service/pom.xml" />
+        <option value="$PROJECT_DIR$/notification_service/pom.xml" />
       </list>
     </option>
   </component>
