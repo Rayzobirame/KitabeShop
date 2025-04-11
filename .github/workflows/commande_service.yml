@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       working-directory: ./commande_service
+      DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/kitabe-commande_service
     defaults:
       run:
         working-directory: ${{ env.working-directory }}
