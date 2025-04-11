@@ -19,6 +19,7 @@
     <modules>
         <module>catalogue_service</module>
         <module>commande_service</module>
+        <module>notification_service</module>
     </modules>
     <build>
         <plugins>
