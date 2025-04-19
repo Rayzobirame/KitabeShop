@@ -12,12 +12,14 @@ services:
       - "8081:8081"
     restart: unless-stopped
     depends_on:
-        catalogue_db:
-          condition: service_healthy
+      catalogue_db:
+        condition: service_healthy
     deploy:
       resources:
         limits:
           memory: 700m
+    networks:
+      - kitabe_network
 
   commande_service:
     image: rayzobirame/kitabe-commande_service
@@ -44,3 +46,59 @@ services:
       resources:
         limits:
           memory: 700m
+    networks:
+      - kitabe_network
+
+  notification_service:
+    image: rayzobirame/kitabe-notification_service
+    container_name: notification_service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_URL=jdbc:postgresql://notifications_db:5432/postgres
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - RABBITMQ_HOST=kitabe_rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+      - MAIL_HOST=mailhog
+      - MAIL_PORT=1025
+    ports:
+      - "8083:8083"
+    restart: unless-stopped
+    depends_on:
+      notifications_db:
+        condition: service_healthy
+      kitabe_rabbitmq:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - kitabe_network
+
+  api_gateway:
+    image: rayzobirame/kitabe-api-gateway
+    container_name: api_gateway
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8989:8989"
+    restart: unless-stopped
+    depends_on:
+      - catalogue_service
+      - commande_service
+      - notification_service
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - kitabe_network
+
+networks:
+  kitabe_network:
+    driver: bridge
