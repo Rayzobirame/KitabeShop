@@ -20,6 +20,7 @@
         <module>catalogue_service</module>
         <module>commande_service</module>
         <module>notification_service</module>
+        <module>api-gateway</module>
     </modules>
     <build>
         <plugins>
