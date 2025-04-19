@@ -10,7 +10,7 @@ services:
     ports:
       - "15432:5432"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -18,6 +18,8 @@ services:
       resources:
         limits:
           memory: 500m
+    networks:
+      - kitabe_network
 
   commande_db:
     image: postgres:16-alpine
@@ -29,7 +31,7 @@ services:
     ports:
       - "25432:5432"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -37,18 +39,20 @@ services:
       resources:
         limits:
           memory: 500m
+    networks:
+      - kitabe_network
 
   kitabe_rabbitmq:
     image: rabbitmq:3.12.11-management
     container_name: kitabe_rabbitmq
     environment:
-      - RABBIT_MQ_USER=guest
-      - RABBIT_MQ_PASSWORD=guest
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
     ports:
       - "5672:5672"
       - "15672:15672"
     healthcheck:
-      test: rabbit_mq_diagnostics check_port_connectivity
+      test: rabbitmq-diagnostics check_port_connectivity
       interval: 30s
       timeout: 30s
       retries: 10
@@ -56,25 +60,29 @@ services:
       resources:
         limits:
           memory: 500m
+    networks:
+      - kitabe_network
 
   notifications_db:
-            image: postgres:16-alpine
-            container_name: notifications_db
-            environment:
-              - POSTGRES_USER=postgres
-              - POSTGRES_PASSWORD=postgres
-              - POSTGRES_DB=postgres
-            ports:
-              - "35432:5432"
-            healthcheck:
-              test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-              interval: 10s
-              timeout: 5s
-              retries: 5
-            deploy:
-              resources:
-                limits:
-                  memory: 500m
+    image: postgres:16-alpine
+    container_name: notifications_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "35432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 500m
+    networks:
+      - kitabe_network
 
   mailhog:
     image: mailhog/mailhog:v1.0.1
@@ -82,3 +90,9 @@ services:
     ports:
       - "1025:1025"
       - "8025:8025"
+    networks:
+      - kitabe_network
+
+networks:
+  kitabe_network:
+    driver: bridge
