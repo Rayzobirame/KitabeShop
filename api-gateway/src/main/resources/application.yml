@@ -1,80 +1,78 @@
 # Configuration du serveur
-# Définit le port et le comportement d'arrêt de l'API Gateway.
 server:
-  port: 8989 # Port sur lequel l'API Gateway s'exécute
-  shutdown: graceful # Assure un arrêt progressif pour éviter d'interrompre les requêtes en cours
+  port: 8989
+  shutdown: graceful
 
 # Configuration de la gestion (Spring Boot Actuator)
-# Configure les endpoints Actuator pour le monitoring et les vérifications de santé.
 management:
   endpoints:
     web:
       exposure:
-        include: "*" # Expose tous les endpoints Actuator (ex. /actuator/health, /actuator/metrics)
+        include: "*"
   endpoint:
     health:
-      show-details: always # Affiche des informations détaillées sur l'état de santé (ex. base de données, espace disque)
+      show-details: always
 
 # Configuration de l'application Spring
 spring:
   application:
-    name: api-gateway # Nom de l'application
+    name: api-gateway
   mvc:
     problemdetails:
-      enabled: true # Active le format RFC 7807 pour les détails des erreurs dans les réponses
+      enabled: true
   cloud:
     gateway:
       discovery:
         locator:
-          enabled: false # Désactive la découverte de services (car Eureka n'est pas utilisé)
+          enabled: false
       globalcors:
         cors-configurations:
           '[/**]':
-            allowed-origins: "http://localhost:3000" # Restreint le CORS à ton front-end (ex. une application React)
-            allowed-methods: "*" # Autorise toutes les méthodes HTTP (GET, POST, etc.)
-            allowed-headers: "*" # Autorise tous les en-têtes
-            allow-credentials: false # Désactive les credentials (cookies, auth) pour des raisons de sécurité
+            allowed-origins: "http://localhost:3000"
+            allowed-methods: "*"
+            allowed-headers: "*"
+            allow-credentials: false
       routes:
         # Route pour catalogue_service
-        - id: catalogue-service
-          uri: ${CATALOGUE_SERVICE_URL:http://localhost:8081} # URL fixe car la découverte de services n'est pas utilisée
+        - id: catalogue_service
+          uri: ${CATALOGUE_SERVICE_URL:http://localhost:8081}
           predicates:
-            - Path=/catalogue/** # Correspond aux requêtes commençant par /api/produits
+            - Path=/catalogue/**
           filters:
-            - RewritePath=/catalogue/(?<segment>.*), /${segment} # Réécrit le chemin (ex. /api/produits/123 -> /123)
+            - RewritePath=/catalogue/(?<segment>.*), /${segment}
         # Route pour commande_service
-        - id: commande-service
-          uri: ${COMMANDE_SERVICE_URL:http://localhost:8082} # URL corrigée (suppression du double ::)
+        - id: commande_service
+          uri: ${COMMANDE_SERVICE_URL:http://localhost:8082}
           predicates:
-            - Path=/commande/** # Correspond aux requêtes commençant par /api/commande
+            - Path=/commande/**
           filters:
-            - RewritePath=/commande/(?<segment>.*), /${segment} # Réécrit le chemin
-        # Route pour la documentation Swagger/OpenAPI
-        - id: openapi
-          uri: http://localhost:${server.port} # Redirige vers l'API Gateway lui-même
+            - RewritePath=/commande/(?<segment>.*), /${segment}
+        # Route pour la documentation Swagger/OpenAPI de catalogue_service
+        - id: openapi_catalogue
+          uri: ${CATALOGUE_SERVICE_URL:http://localhost:8081}
           predicates:
-            - Path=/v3/api-docs/** # Correspond aux requêtes pour la documentation API
+            - Path=/v3/api-docs/catalogue
           filters:
-            - RewritePath=/v3/api-docs/(?<segment>.*), /${segment}/v3/api-docs # Réécrit le chemin pour Swagger
-  sleuth:
-    sampler:
-      probability: 1.0 # Active le traçage distribué pour 100% des requêtes
+            - RewritePath=/v3/api-docs/catalogue, /v3/api-docs
+        # Route pour la documentation Swagger/OpenAPI de commande_service
+        - id: openapi_commande
+          uri: ${COMMANDE_SERVICE_URL:http://localhost:8082}
+          predicates:
+            - Path=/v3/api-docs/commande
+          filters:
+            - RewritePath=/v3/api-docs/commande, /v3/api-docs
 
 # Configuration de Springdoc Swagger UI
-# Configure Swagger UI pour la documentation des API des microservices.
 springdoc:
   swagger-ui:
-    use-root-path: true # Corrigé de user-root-path; active Swagger UI à la racine
+    use-root-path: true
     urls:
       - name: catalogue
-        url: /v3/api-docs/catalogue # Documentation pour catalogue_service
+        url: /v3/api-docs/catalogue
       - name: commande
-        url: /v3/api-docs/commande # Documentation pour commande_service
-      - name: notification
-        url: /v3/api-docs/notifications # Documentation pour notification_service
+        url: /v3/api-docs/commande
 
 # Configuration des logs
-# Ajoute les identifiants de traçage (traceId, spanId) dans les logs pour le traçage distribué.
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%X{traceId}/%X{spanId}] %-5level %logger{36} - %msg%n"
