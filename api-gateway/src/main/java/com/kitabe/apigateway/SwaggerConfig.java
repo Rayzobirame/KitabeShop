@@ -1,17 +1,16 @@
 package com.kitabe.apigateway;
 
+import static org.springdoc.core.utils.Constants.DEFAULT_API_DOCS_URL;
+
 import jakarta.annotation.PostConstruct;
+import java.util.HashSet;
+import java.util.Set;
 import org.springdoc.core.properties.AbstractSwaggerUiConfigProperties.SwaggerUrl;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
 import org.springframework.context.annotation.Configuration;
 import reactor.core.publisher.Flux;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.springdoc.core.utils.Constants.DEFAULT_API_DOCS_URL;
 
 /**
  * Classe de configuration pour Swagger UI dans l'API Gateway.
@@ -30,7 +29,8 @@ public class SwaggerConfig {
      * @param swaggerUiConfigProperties Propriétés pour configurer Swagger UI.
      * @param routeDefinitionLocator Localisateur pour récupérer les définitions de routes de l'API Gateway.
      */
-    public SwaggerConfig(SwaggerUiConfigProperties swaggerUiConfigProperties, RouteDefinitionLocator routeDefinitionLocator) {
+    public SwaggerConfig(
+            SwaggerUiConfigProperties swaggerUiConfigProperties, RouteDefinitionLocator routeDefinitionLocator) {
         this.swaggerUiConfigProperties = swaggerUiConfigProperties;
         this.routeDefinitionLocator = routeDefinitionLocator;
     }
@@ -48,7 +48,8 @@ public class SwaggerConfig {
         // Récupère les définitions de routes de manière réactive et les traite
         Flux<RouteDefinition> routeDefinitions = routeDefinitionLocator.getRouteDefinitions();
         routeDefinitions
-                .filter(routeDefinition -> routeDefinition.getId().endsWith("-service")) // Filtre les routes des microservices
+                .filter(routeDefinition ->
+                        routeDefinition.getId().endsWith("-service")) // Filtre les routes des microservices
                 .subscribe(routeDefinition -> {
                     // Extrait le nom du service en supprimant le suffixe "-service"
                     String name = routeDefinition.getId().replace("-service", "");
