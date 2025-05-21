@@ -9,7 +9,5 @@ import org.springframework.context.annotation.Import;
 class NotificationServiceApplicationTests extends AbstractIT {
 
     @Test
-    void contextLoads() {
-    }
-
+    void contextLoads() {}
 }
