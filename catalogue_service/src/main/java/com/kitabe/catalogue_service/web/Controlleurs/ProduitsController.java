@@ -38,5 +38,4 @@ class ProduitsController {
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> ProduitNotFoundException.forCode(code));
     }
-
 }
