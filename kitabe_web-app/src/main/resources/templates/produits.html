@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+</head>
+<body>
+<div layout:fragment="content">
+    <div th:x-data="|initData('${pageNum}')|">
+        <div th:replace="~{fragments/pagination :: pagination}"></div>
+        <div class="row row-cols-1 row-cols-md-5">
+            <template x-for="produit for produits.data">
+                <div class="col mb-3">
+                    <div class="cart h-100 produits">
+                        <img :src="produit.imageUrl" class="cart-img-top" height="300" width="200"/>
+                        <div class="cart-body">
+                            <h5 class="cart-body" data-toogle="tooltip" data-placement="top" x-text="produit.nom">produit.nom</h5>
+                            <h1 class="cart-text" data-toogle="tooltip" data-placement="top" x-text="'Prix: $'+produit.prix">produit.prix</h1>
+                        </div>
+                        <div class="cart-footer" style="">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary" @click="addToCart(produit)">Ajouter au panier</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <h1>Afficher les produits ici</h1>
+        <h1>Chargement: <span x-text="pageNum">0</span></h1>
+    </div>
+</div>
+<div layout:fragment="pageScripts">
+    <script src="/js/produits.js"></script>
+</div>
+</body>
+</html>
