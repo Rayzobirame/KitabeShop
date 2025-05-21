@@ -21,6 +21,7 @@
         <module>commande_service</module>
         <module>notification_service</module>
         <module>api-gateway</module>
+        <module>kitabe_web-app</module>
     </modules>
     <build>
         <plugins>
