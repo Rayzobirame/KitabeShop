@@ -26,7 +26,7 @@ services:
     container_name: commande_service
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - COMMANDE_CATALOGUE_SERVICE_URL=http://catalogue_service:8081
+      - COMMANDE_CATALOGUE_SERVICE_URL=http://api-gateway:8989/catalogue
       - DB_URL=jdbc:postgresql://commande_db:5432/postgres
       - DB_USERNAME=postgres
       - DB_PASSWORD=postgres
@@ -80,18 +80,16 @@ services:
     networks:
       - kitabe_network
 
-  api_gateway:
+  api-gateway:
     image: rayzobirame/kitabe-api-gateway
-    container_name: api_gateway
+    container_name: api-gateway
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - CATALOGUE_SERVICE_URL=http://catalogue_service:8081
+      - COMMANDE_SERVICE_URL=http://commande_service:8082
     ports:
       - "8989:8989"
     restart: unless-stopped
-    depends_on:
-      - catalogue_service
-      - commande_service
-      - notification_service
     deploy:
       resources:
         limits:
