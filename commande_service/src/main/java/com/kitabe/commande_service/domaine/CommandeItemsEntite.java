@@ -1,7 +1,6 @@
 package com.kitabe.commande_service.domaine;
 
 import jakarta.persistence.*;
-
 import java.math.BigDecimal;
 
 @Entity
@@ -9,24 +8,24 @@ import java.math.BigDecimal;
 public class CommandeItemsEntite {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE , generator = "commande_item_id_generator")
-    @SequenceGenerator(name = "commande_item_id_generator",sequenceName = "commande_item_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "commande_item_id_generator")
+    @SequenceGenerator(name = "commande_item_id_generator", sequenceName = "commande_item_id_seq")
     private Long id;
 
     private String nom;
 
-   @Column(nullable = false)
+    @Column(nullable = false)
     private String code;
 
-   @Column(nullable = false)
-   private BigDecimal prix;
+    @Column(nullable = false)
+    private BigDecimal prix;
 
-   @Column(nullable = false)
-   private Integer quantite;
+    @Column(nullable = false)
+    private Integer quantite;
 
-   @ManyToOne(optional = false)
-   @JoinColumn(name = "commande_id")
-   private CommandeEntite commande;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "commande_id")
+    private CommandeEntite commande;
 
     public Long getId() {
         return id;

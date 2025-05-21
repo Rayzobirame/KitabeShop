@@ -4,12 +4,11 @@ import com.kitabe.commande_service.domaine.model.Addresse;
 import com.kitabe.commande_service.domaine.model.Client;
 import com.kitabe.commande_service.domaine.model.CommandeItems;
 import com.kitabe.commande_service.domaine.model.CreerCommandeRequest;
-import org.instancio.Instancio;
-import org.instancio.Select;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+import org.instancio.Instancio;
+import org.instancio.Select;
 
 /**
  * Classe utilitaire pour générer des payloads de test pour les commandes.
@@ -25,9 +24,11 @@ public class TestDataFactory {
     /** Liste de pays valides pour les adresses de livraison. */
     static final List<String> PAYS_VALIDES = List.of("Senegal", "France", "Etat-Unis");
     /** Ensemble d'items valides pour une commande. */
-    static final Set<CommandeItems> COMMANDE_VALIDES = Set.of(new CommandeItems("392", "Lait", new BigDecimal ("29.9") ,2));
+    static final Set<CommandeItems> COMMANDE_VALIDES =
+            Set.of(new CommandeItems("392", "Lait", new BigDecimal("29.9"), 2));
     /** Ensemble d'items invalides ou utilisé comme référence dans certains cas de test. */
-    static final Set<CommandeItems> COMMANDE_INVALIDES = Set.of(new CommandeItems("103", "Livres", new BigDecimal ("22.0"),3));
+    static final Set<CommandeItems> COMMANDE_INVALIDES =
+            Set.of(new CommandeItems("103", "Livres", new BigDecimal("22.0"), 3));
 
     /**
      * Crée une requête valide pour une commande.
@@ -73,7 +74,6 @@ public class TestDataFactory {
         return new CreerCommandeRequest(COMMANDE_VALIDES, clientInvalide, adresse);
     }
 
-
     // Méthode temporaire pour adresse invalide
     /**
      * Crée une requête avec une adresse de livraison invalide (ex. adresse1 manquante).
@@ -107,8 +107,7 @@ public class TestDataFactory {
         return new CreerCommandeRequest(null, clientInvalide, adresse);
     }
 
-
-   /* public static String creerRequestCommandeAvecClientInvalide() {
+    /* public static String creerRequestCommandeAvecClientInvalide() {
         return """
                 {
                     "client": {
@@ -139,7 +138,7 @@ public class TestDataFactory {
      * Crée un payload JSON pour une commande valide (pour d'autres tests).
      * @return Payload JSON sous forme de chaîne.
      */
-   /* public static String creerRequestCommandeValide() {
+    /* public static String creerRequestCommandeValide() {
         return """
                 {
                     "client": {

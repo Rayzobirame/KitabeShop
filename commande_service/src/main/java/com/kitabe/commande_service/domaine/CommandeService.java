@@ -1,14 +1,12 @@
 package com.kitabe.commande_service.domaine;
 
 import com.kitabe.commande_service.domaine.model.*;
-
+import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -26,7 +24,8 @@ public class CommandeService {
     private CommandeValidateur validateur;
     private CommandeEvenementService evenementService;
     private static final Logger log = LoggerFactory.getLogger(CommandeService.class);
-    private static final List<String> LIST_PAYS_AUTORISER_POUR_LIVRAISON = List.of("Senegal","France","Cote d'ivoire","Etats-Unis");
+    private static final List<String> LIST_PAYS_AUTORISER_POUR_LIVRAISON =
+            List.of("Senegal", "France", "Cote d'ivoire", "Etats-Unis");
 
     /**
      * Construit une instance de {@link CommandeService}.
@@ -36,7 +35,11 @@ public class CommandeService {
      * @param evenementService          Le service pour gérer les événements de commande (utilisé pour la création).
      * @param commandeEvenementService1 Le service pour gérer les événements de commande (utilisé pour les autres états comme livraison ou annulation).
      */
-    public CommandeService(CommandeRepository commandeRepository, CommandeValidateur validateur, CommandeEvenementService evenementService, CommandeEvenementService commandeEvenementService1) {
+    public CommandeService(
+            CommandeRepository commandeRepository,
+            CommandeValidateur validateur,
+            CommandeEvenementService evenementService,
+            CommandeEvenementService commandeEvenementService1) {
         this.commandeRepository = commandeRepository;
         this.validateur = validateur;
         this.evenementService = evenementService;
@@ -59,7 +62,8 @@ public class CommandeService {
         nouvelleCommande.setPseudo(username);
         CommandeEntite savedCommande = this.commandeRepository.save(nouvelleCommande);
         log.info("Une nouvelle commande a été creer avec : " + savedCommande.getCommandeNum());
-        CreerCommandeEvenement commandeCreerEvenement = CommandeEvenementMapper.buildCommandeCreerSurEvenement(savedCommande);
+        CreerCommandeEvenement commandeCreerEvenement =
+                CommandeEvenementMapper.buildCommandeCreerSurEvenement(savedCommande);
         evenementService.save(commandeCreerEvenement);
         return new CreerCommandeResponse(savedCommande.getCommandeNum());
     }
@@ -70,9 +74,9 @@ public class CommandeService {
      * les traite une par une en déterminant si elles peuvent être livrées ou annulées,
      * et met à jour leur statut en conséquence.
      */
-    public void nouveauProcessusCommande(){
+    public void nouveauProcessusCommande() {
         List<CommandeEntite> commande = commandeRepository.findByStatus(CommandeStatus.NOUVEAU);
-        log.info("nouvelle commande trouvée en cours de procedure{}",commande.size());
+        log.info("nouvelle commande trouvée en cours de procedure{}", commande.size());
         for (CommandeEntite commandeEntite : commande) {
             this.process(commandeEntite);
         }
@@ -88,20 +92,20 @@ public class CommandeService {
      */
     private void process(CommandeEntite commandes) {
         try {
-            if(peutEtreDelivrer(commandes)){
-                log.info("La commande {} peut etre delivrer a bon port",commandes.getCommandeNum());
-                commandeRepository.updateCommandeStatus(commandes.getCommandeNum(),CommandeStatus.DELIVRER);
+            if (peutEtreDelivrer(commandes)) {
+                log.info("La commande {} peut etre delivrer a bon port", commandes.getCommandeNum());
+                commandeRepository.updateCommandeStatus(commandes.getCommandeNum(), CommandeStatus.DELIVRER);
                 commandeEvenementService.save(CommandeEvenementMapper.buildCommandeDelivrerEvenement(commandes));
+            } else {
+                log.info("Cette commande {} ne peut pas etre delivrer", commandes.getCommandeNum());
+                commandeRepository.updateCommandeStatus(commandes.getCommandeNum(), CommandeStatus.ANNULER);
+                commandeEvenementService.save(CommandeEvenementMapper.buildCommandeAnnuleeEvenement(
+                        commandes, "Livraison non autoriser sur cette localité"));
             }
-            else {
-                log.info("Cette commande {} ne peut pas etre delivrer" ,commandes.getCommandeNum());
-                commandeRepository.updateCommandeStatus(commandes.getCommandeNum(),CommandeStatus.ANNULER);
-                commandeEvenementService.save(CommandeEvenementMapper.buildCommandeAnnuleeEvenement(commandes,"Livraison non autoriser sur cette localité"));
-            }
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             log.error("La commande numero {} n'a pas reussi a etre effectif ", commandes.getCommandeNum(), e);
-            commandeEvenementService.save(CommandeEvenementMapper.buildCommandeErreurEvenement(commandes,e.getMessage()));
+            commandeEvenementService.save(
+                    CommandeEvenementMapper.buildCommandeErreurEvenement(commandes, e.getMessage()));
         }
     }
 
@@ -113,12 +117,12 @@ public class CommandeService {
      * @return {@code true} si le pays de livraison est autorisé, {@code false} sinon.
      */
     private boolean peutEtreDelivrer(CommandeEntite commandes) {
-        return LIST_PAYS_AUTORISER_POUR_LIVRAISON.contains(commandes.getLivraisonAddresse().pays().toUpperCase());
+        return LIST_PAYS_AUTORISER_POUR_LIVRAISON.contains(
+                commandes.getLivraisonAddresse().pays().toUpperCase());
     }
 
-    public List<CommandeSommaire> trouveCommande(String pseudo){
-       return commandeRepository.findByPseudo(pseudo);
-
+    public List<CommandeSommaire> trouveCommande(String pseudo) {
+        return commandeRepository.findByPseudo(pseudo);
     }
 
     /**
@@ -131,6 +135,8 @@ public class CommandeService {
      * @return Un {@link Optional} contenant le {@link CommandeDTO} si la commande existe, ou vide sinon.
      */
     public Optional<CommandeDTO> trouveCommandeClient(String username, String commandeNum) {
-        return commandeRepository.findByPseudoAndCommandeNum(username,commandeNum).map(CommandeMapper::convertToDTO);
+        return commandeRepository
+                .findByPseudoAndCommandeNum(username, commandeNum)
+                .map(CommandeMapper::convertToDTO);
     }
 }

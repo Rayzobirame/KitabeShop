@@ -10,6 +10,4 @@ public record CommandeErreurEvenement(
         Client client,
         Addresse addresse,
         String raison,
-        LocalDateTime creerLe
-){
-}
+        LocalDateTime creerLe) {}

@@ -1,11 +1,10 @@
 package com.kitabe.notification.domaine;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="commande_evenements")
+@Table(name = "commande_evenements")
 public class CommandeEvenementEntite {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "commande_evenement_id_generator")
@@ -25,9 +24,7 @@ public class CommandeEvenementEntite {
         this.evenementId = evenementId;
     }
 
-    public CommandeEvenementEntite() {
-
-    }
+    public CommandeEvenementEntite() {}
 
     public LocalDateTime getMiseAjour() {
         return miseAjour;
@@ -61,4 +58,3 @@ public class CommandeEvenementEntite {
         this.id = id;
     }
 }
-

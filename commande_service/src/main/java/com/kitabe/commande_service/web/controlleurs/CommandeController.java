@@ -7,14 +7,12 @@ import com.kitabe.commande_service.domaine.model.CommandeDTO;
 import com.kitabe.commande_service.domaine.model.CommandeSommaire;
 import com.kitabe.commande_service.domaine.model.CreerCommandeRequest;
 import com.kitabe.commande_service.domaine.model.CreerCommandeResponse;
-
 import jakarta.validation.Valid;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/commande")
@@ -30,13 +28,13 @@ public class CommandeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    CreerCommandeResponse creerCommande(@Valid @RequestBody CreerCommandeRequest creerCommandeRequest){
+    CreerCommandeResponse creerCommande(@Valid @RequestBody CreerCommandeRequest creerCommandeRequest) {
         String username = securityService.getLoginUsername();
-        log.info("creerCommande pour l'utilisateur :" +username);
+        log.info("creerCommande pour l'utilisateur :" + username);
         if (username == null) {
             username = "visiteur"; // ou une autre valeur par défaut pour les tests
         }
-        return commandeService.creerCommande(username,creerCommandeRequest);
+        return commandeService.creerCommande(username, creerCommandeRequest);
     }
 
     /**
@@ -47,9 +45,9 @@ public class CommandeController {
      * @return Une liste de sommaires de commandes ({@link CommandeSommaire}) pour l'utilisateur connecté.
      */
     @GetMapping
-    List<CommandeSommaire> getCommandes(){
+    List<CommandeSommaire> getCommandes() {
         String pseudo = securityService.getLoginUsername();
-        log.info("creerCommande pour l'utilisateur :" +pseudo);
+        log.info("creerCommande pour l'utilisateur :" + pseudo);
         return commandeService.trouveCommande(pseudo);
     }
     /**
@@ -62,9 +60,11 @@ public class CommandeController {
      * @throws CommandeNotFoundException Si aucune commande n'est trouvée pour le numéro spécifié.
      */
     @GetMapping(value = "/{commandeNum}")
-    CommandeDTO getCommande(@PathVariable(value = "commandeNum") String commandeNum){
-        log.info("recuperer la commande a base de l'id :" +commandeNum);
+    CommandeDTO getCommande(@PathVariable(value = "commandeNum") String commandeNum) {
+        log.info("recuperer la commande a base de l'id :" + commandeNum);
         String username = securityService.getLoginUsername();
-        return commandeService.trouveCommandeClient(username,commandeNum).orElseThrow(()-> new CommandeNotFoundException(commandeNum));
+        return commandeService
+                .trouveCommandeClient(username, commandeNum)
+                .orElseThrow(() -> new CommandeNotFoundException(commandeNum));
     }
 }

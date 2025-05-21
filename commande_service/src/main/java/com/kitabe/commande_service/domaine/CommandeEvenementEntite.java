@@ -1,21 +1,20 @@
 package com.kitabe.commande_service.domaine;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="commande_evenements")
+@Table(name = "commande_evenements")
 public class CommandeEvenementEntite {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE , generator = "commande_evenement_id_generator")
-    @SequenceGenerator(name = "commande_evenement_id_generator",sequenceName = "commande_evenements_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "commande_evenement_id_generator")
+    @SequenceGenerator(name = "commande_evenement_id_generator", sequenceName = "commande_evenements_id_seq")
     private Long id;
 
-    @Column(name="commande_num",nullable = false)
+    @Column(name = "commande_num", nullable = false)
     private String commandeNum;
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     private String evenementId;
 
     @Enumerated(EnumType.STRING)
@@ -24,7 +23,7 @@ public class CommandeEvenementEntite {
     @Column(nullable = false)
     private String payload;
 
-    @Column(name = "creation_date", nullable = false,updatable = false)
+    @Column(name = "creation_date", nullable = false, updatable = false)
     private LocalDateTime creerLe = LocalDateTime.now();
 
     @Column(name = "date_modification")

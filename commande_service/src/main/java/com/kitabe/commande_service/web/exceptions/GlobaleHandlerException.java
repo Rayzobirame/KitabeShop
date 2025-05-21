@@ -1,13 +1,12 @@
 package com.kitabe.commande_service.web.exceptions;
 
+import com.kitabe.commande_service.domaine.CommandeNotFoundException;
+import com.kitabe.commande_service.domaine.model.InvalideCommandeException;
+import jakarta.annotation.Nullable;
 import java.net.URI;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.kitabe.commande_service.domaine.CommandeNotFoundException;
-import com.kitabe.commande_service.domaine.model.InvalideCommandeException;
-import jakarta.annotation.Nullable;
 import org.springframework.http.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -81,13 +80,13 @@ public class GlobaleHandlerException extends ResponseEntityExceptionHandler {
         return problemDetail;
     }
 
-    @Nullable
-    @Override
+    @Nullable @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         List<String> errors = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Requete payload invalide");
+        ProblemDetail problemDetail =
+                ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Requete payload invalide");
         problemDetail.setTitle("Bad Request");
         problemDetail.setType(BAD_REQUEST_TYPE);
         problemDetail.setProperty("erreur", errors);
@@ -96,6 +95,4 @@ public class GlobaleHandlerException extends ResponseEntityExceptionHandler {
         problemDetail.setProperty("timestamp", Instant.now());
         return new ResponseEntity<>(problemDetail, HttpStatus.BAD_REQUEST);
     }
-
 }
-

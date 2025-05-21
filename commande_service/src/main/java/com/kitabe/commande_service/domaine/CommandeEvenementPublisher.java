@@ -35,16 +35,19 @@ public class CommandeEvenementPublisher {
      *
      * @param evenement L'événement de création de commande ({@link CreerCommandeEvenement}) à publier.
      */
-    public void publish(CreerCommandeEvenement evenement){
+    public void publish(CreerCommandeEvenement evenement) {
         this.send(properties.nouvelleCommandeQueue(), evenement);
     }
-    public void publish(CommandeDelivrerEvenement evenement){
+
+    public void publish(CommandeDelivrerEvenement evenement) {
         this.send(properties.delivranceCommandeQueue(), evenement);
     }
-    public void publish(CommandeAnnuleeEvenement evenement){
+
+    public void publish(CommandeAnnuleeEvenement evenement) {
         this.send(properties.annulationCommandeQueue(), evenement);
     }
-    public void publish(CommandeErreurEvenement evenement){
+
+    public void publish(CommandeErreurEvenement evenement) {
         this.send(properties.erreurCommandeQueue(), evenement);
     }
     /**
@@ -54,8 +57,7 @@ public class CommandeEvenementPublisher {
      * @param routingKey La clé de routage utilisée pour diriger le message vers la bonne file d'attente.
      * @param payload    La charge utile (objet) à envoyer, qui sera sérialisée et envoyée via RabbitMQ.
      */
-
-    private void send(String routingKey, Object payload){
-        rabbitTemplate.convertAndSend(properties.commandeEvenementEchange(),routingKey, payload);
+    private void send(String routingKey, Object payload) {
+        rabbitTemplate.convertAndSend(properties.commandeEvenementEchange(), routingKey, payload);
     }
 }

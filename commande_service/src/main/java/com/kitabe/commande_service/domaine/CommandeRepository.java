@@ -1,12 +1,11 @@
 package com.kitabe.commande_service.domaine;
 
 import com.kitabe.commande_service.domaine.model.CommandeSommaire;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface CommandeRepository extends JpaRepository<CommandeEntite, Long> {
@@ -50,9 +49,9 @@ public interface CommandeRepository extends JpaRepository<CommandeEntite, Long> 
      * @param pseudo Le pseudo de l'utilisateur dont on veut récupérer les commandes.
      * @return Une liste de sommaires de commandes ({@link CommandeSommaire}) associées à l'utilisateur.
      */
-    @Query("select new com.kitabe.commande_service.domaine.model.CommandeSommaire(o.commandeNum, o.status) " +
-            "from CommandeEntite o " +
-            "where o.pseudo = :pseudo")
+    @Query("select new com.kitabe.commande_service.domaine.model.CommandeSommaire(o.commandeNum, o.status) "
+            + "from CommandeEntite o "
+            + "where o.pseudo = :pseudo")
     List<CommandeSommaire> findByPseudo(String pseudo);
 
     /**
@@ -64,6 +63,7 @@ public interface CommandeRepository extends JpaRepository<CommandeEntite, Long> 
      * @param commandeNum Le numéro unique de la commande (mappé au paramètre nommé :commandeNum).
      * @return Un {@link Optional} contenant l'{@link CommandeEntite} si elle existe, ou vide sinon.
      */
-    @Query("select distinct c from CommandeEntite c left join fetch c.commandeItems where c.pseudo =:pseudo and c.commandeNum=:commandeNum")
+    @Query(
+            "select distinct c from CommandeEntite c left join fetch c.commandeItems where c.pseudo =:pseudo and c.commandeNum=:commandeNum")
     Optional<CommandeEntite> findByPseudoAndCommandeNum(String pseudo, String commandeNum);
 }

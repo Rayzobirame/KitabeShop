@@ -1,8 +1,7 @@
 package com.kitabe.commande_service.clients.catalogue;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kitabe.commande_service.ApplicationProperties;
-
+import java.time.Duration;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.util.Timeout;
@@ -12,11 +11,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestClient;
-
-import java.time.Duration;
 
 @Configuration
 @ConfigurationProperties(prefix = "rest.client")
@@ -41,10 +36,11 @@ public class CatalogueServiceClientConfig {
     }
 
     private static final Logger logger = LoggerFactory.getLogger(CatalogueServiceClientConfig.class);
+
     @Bean
     RestClient restClient(ApplicationProperties properties) {
         String baseurl = properties.catalogueService_url();
-        if(baseurl == null || baseurl.trim().isEmpty()){
+        if (baseurl == null || baseurl.trim().isEmpty()) {
             logger.error("Catalogue service URL is not set");
             throw new IllegalStateException("Catalogue service URL is not set");
         }
@@ -56,13 +52,9 @@ public class CatalogueServiceClientConfig {
                 .build();
 
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(
-                HttpClients.custom().setDefaultRequestConfig(requestConfig).build()
-        );
+                HttpClients.custom().setDefaultRequestConfig(requestConfig).build());
 
         // Créez le RestClient avec le RequestFactory configuré
-        return RestClient.builder()
-                .baseUrl(baseurl)
-                .requestFactory(factory)
-                .build();
+        return RestClient.builder().baseUrl(baseurl).requestFactory(factory).build();
     }
 }

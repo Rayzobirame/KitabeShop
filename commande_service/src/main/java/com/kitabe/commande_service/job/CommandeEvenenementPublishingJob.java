@@ -1,6 +1,7 @@
 package com.kitabe.commande_service.job;
 
 import com.kitabe.commande_service.domaine.CommandeEvenementService;
+import java.time.Instant;
 import net.javacrumbs.shedlock.core.LockAssert;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
@@ -8,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 /**
  * Job planifié pour publier les événements de commande.
  * Cette classe est responsable de déclencher périodiquement la publication des événements de commande
@@ -37,7 +37,7 @@ public class CommandeEvenenementPublishingJob {
      * La vérification {@link LockAssert#assertLocked()} assure que le verrou a été acquis avant l'exécution.
      */
     @Scheduled(cron = "${commande.publish-commande-evenement-Job-cron}")
-    @SchedulerLock(name="publishCommandeEvenement")
+    @SchedulerLock(name = "publishCommandeEvenement")
     void publishCommandeEvenement() {
         LockAssert.assertLocked();
         log.info("Publication de commandeEvenement a {}", Instant.now());

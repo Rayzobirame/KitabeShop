@@ -2,6 +2,7 @@ package com.kitabe.commande_service.domaine.model;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+
 /**
  * Représente un événement de création de commande dans le système.
  * Ce record est utilisé pour encapsuler les informations nécessaires à la création d'une commande,
@@ -16,13 +17,11 @@ import java.util.Set;
  * @param addresse    L'adresse de livraison ({@link Addresse}) pour la commande.
  * @param creerLe     La date et l'heure de création de l'événement.
  */
-
 public record CreerCommandeEvenement(
         String evenementId,
         String commandeNum,
         Set<CommandeItems> items,
         Client client,
         Addresse addresse,
-        LocalDateTime creerLe
-) implements CommandeEvenement{
-}
+        LocalDateTime creerLe)
+        implements CommandeEvenement {}

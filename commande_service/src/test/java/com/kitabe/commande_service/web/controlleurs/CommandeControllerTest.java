@@ -1,23 +1,22 @@
 package com.kitabe.commande_service.web.controlleurs;
 
+import static com.kitabe.commande_service.web.utils.TestDataFactory.creerRequestCommandeAvecClientInvalide;
+import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.kitabe.commande_service.AbstractIT;
 import com.kitabe.commande_service.domaine.model.CommandeSommaire;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
+import java.math.BigDecimal;
+import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import static com.kitabe.commande_service.web.utils.TestDataFactory.creerRequestCommandeAvecClientInvalide;
-import static io.restassured.RestAssured.given; // Ajout de l'import manquant
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue; // Import corrigé (sans shaded)
-import static org.junit.jupiter.api.Assertions.*; // Import inutilisé, mais conservé pour d'autres tests futurs
 
 /**
  * Tests pour le contrôleur CommandeController.
@@ -41,9 +40,10 @@ class CommandeControllerTest extends AbstractIT {
          */
         @Test
         void creerCommandeAvecSucces() {
-            mockGetProduitByCode("LIV-SCI-003","Neuromancien",new BigDecimal("13.25"));
+            mockGetProduitByCode("LIV-SCI-003", "Neuromancien", new BigDecimal("13.25"));
             // Payload JSON pour la création d'une commande
-            var payload = """
+            var payload =
+                    """
                     {
                         "client": {
                             "prenom": "issa",
@@ -71,24 +71,22 @@ class CommandeControllerTest extends AbstractIT {
                     """;
 
             // Exécute la requête POST et vérifie la réponse
-            given()
-                    .contentType(ContentType.JSON) // Définit le type de contenu comme JSON
-                    .body(payload)                // Envoie le payload JSON
+            given().contentType(ContentType.JSON) // Définit le type de contenu comme JSON
+                    .body(payload) // Envoie le payload JSON
                     .when()
-                    .post("/api/commande")       // Appelle l'endpoint POST
+                    .post("/api/commande") // Appelle l'endpoint POST
                     .then()
                     .statusCode(HttpStatus.CREATED.value()) // Vérifie que le code HTTP est 201
-                    .body("commandeNum", notNullValue());   // Vérifie que commandeNum est non nul
+                    .body("commandeNum", notNullValue()); // Vérifie que commandeNum est non nul
         }
 
         @Test
-        void shouldretourbadRequestWhenMandatoryDataIsMissing(){
+        void shouldretourbadRequestWhenMandatoryDataIsMissing() {
             var payload = creerRequestCommandeAvecClientInvalide();
-            given()
-                    .contentType(ContentType.JSON) // Définit le type de contenu comme JSON
-                    .body(payload)                // Envoie le payload JSON
+            given().contentType(ContentType.JSON) // Définit le type de contenu comme JSON
+                    .body(payload) // Envoie le payload JSON
                     .when()
-                    .post("/api/commande")       // Appelle l'endpoint POST
+                    .post("/api/commande") // Appelle l'endpoint POST
                     .then()
                     .statusCode(HttpStatus.BAD_REQUEST.value());
         }
@@ -100,7 +98,7 @@ class CommandeControllerTest extends AbstractIT {
      * d'un utilisateur authentifié.
      */
     @Nested
-    class getCommandeTest{
+    class getCommandeTest {
 
         /**
          * Vérifie que l'endpoint GET /api/commande retourne avec succès un sommaire des commandes.
@@ -109,14 +107,14 @@ class CommandeControllerTest extends AbstractIT {
          * Les données de test sont insérées via Flyway (V2__insert_test_data.sql).
          */
         @Test
-        void shouldretourneCommandeReussi(){
-            List<CommandeSommaire> sommaireCommande = given()
-                    .when()
+        void shouldretourneCommandeReussi() {
+            List<CommandeSommaire> sommaireCommande = given().when()
                     .get("/api/commande")
                     .then()
                     .statusCode(200)
                     .extract()
-                    .body().as(new TypeRef<>(){});
+                    .body()
+                    .as(new TypeRef<>() {});
             assertThat(sommaireCommande).hasSize(4);
         }
     }
@@ -127,7 +125,7 @@ class CommandeControllerTest extends AbstractIT {
      * identifiée par son numéro de commande.
      */
     @Nested
-    class getCommandebyCommandeNum{
+    class getCommandebyCommandeNum {
         // Numéro de commande utilisé pour les tests (correspond à une commande insérée via Flyway)
         String commandeNum = "364ca8b2-5255-4a2b-b042-341dae1fa617";
 
@@ -141,14 +139,13 @@ class CommandeControllerTest extends AbstractIT {
          * - La commande contient exactement 2 articles (basé sur les données insérées via Flyway).
          */
         @Test
-        void shouldretourneCommandeReussi(){
-            given()
-                    .when()
+        void shouldretourneCommandeReussi() {
+            given().when()
                     .get("/api/commande/{commandeNum}", commandeNum)
                     .then()
                     .statusCode(200)
                     .body("commandeNum", equalTo(commandeNum))
-                    .body("items.size()",equalTo(2));
+                    .body("items.size()", equalTo(2));
         }
     }
 }

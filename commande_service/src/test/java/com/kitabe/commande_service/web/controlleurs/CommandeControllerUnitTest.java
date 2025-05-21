@@ -1,24 +1,5 @@
 package com.kitabe.commande_service.web.controlleurs;
 
-import com.kitabe.commande_service.domaine.CommandeService;
-import com.kitabe.commande_service.domaine.SecurityService;
-import com.kitabe.commande_service.domaine.model.CreerCommandeRequest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.stream.Stream;
-
 import static com.kitabe.commande_service.web.utils.TestDataFactory.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,16 +8,33 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kitabe.commande_service.domaine.CommandeService;
+import com.kitabe.commande_service.domaine.SecurityService;
+import com.kitabe.commande_service.domaine.model.CreerCommandeRequest;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
 @WebMvcTest(CommandeController.class)
 @ExtendWith(MockitoExtension.class)
 public class CommandeControllerUnitTest {
 
     /** Service de commande mocké utilisé par le contrôleur. */
-    @MockitoBean
+    @MockBean
     private CommandeService commandeService;
 
     /** Service de sécurité mocké pour simuler l'authentification. */
-    @MockitoBean
+    @MockBean
     private SecurityService securityService;
 
     /** Instance de MockMvc pour simuler les requêtes HTTP. */
@@ -76,18 +74,20 @@ public class CommandeControllerUnitTest {
      */
 
     /*Description : Annotation de JUnit 5 pour exécuter un test avec plusieurs ensembles de paramètres.
-     Le paramètre name personnalise le nom des exécutions dans les rapports (par exemple, "0 - commande avec client invalide").
-      Utilisation dans shouldReturnBadRequestWhenCommandePayloadIsInvalid :
-      Permet de tester plusieurs scénarios d’invalidité avec une seule méthode.*/
+    Le paramètre name personnalise le nom des exécutions dans les rapports (par exemple, "0 - commande avec client invalide").
+     Utilisation dans shouldReturnBadRequestWhenCommandePayloadIsInvalid :
+     Permet de tester plusieurs scénarios d’invalidité avec une seule méthode.*/
 
-       /*Description : Indique la méthode qui fournit les données pour un test paramétré.
-      Doit retourner un Stream, Iterable, ou tableau d’arguments.
-      Utilisation dans shouldReturnBadRequestWhenCommandePayloadIsInvalid :
-      Lie le test à la méthode creerCommandeRequestProvider pour obtenir les données.*/
+    /*Description : Indique la méthode qui fournit les données pour un test paramétré.
+    Doit retourner un Stream, Iterable, ou tableau d’arguments.
+    Utilisation dans shouldReturnBadRequestWhenCommandePayloadIsInvalid :
+    Lie le test à la méthode creerCommandeRequestProvider pour obtenir les données.*/
     @ParameterizedTest(name = "{index} - {0}")
     @MethodSource("creerCommandeRequestProvider")
-    void shouldReturnBadRequestWhenCommandePayloadIsInvalid(String name, CreerCommandeRequest request) throws Exception {
-        given(commandeService.creerCommande(eq("birame"), any(CreerCommandeRequest.class))).willReturn(null);
+    void shouldReturnBadRequestWhenCommandePayloadIsInvalid(String name, CreerCommandeRequest request)
+            throws Exception {
+        given(commandeService.creerCommande(eq("birame"), any(CreerCommandeRequest.class)))
+                .willReturn(null);
 
         mockMvc.perform(post("/api/commande")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -110,8 +110,6 @@ public class CommandeControllerUnitTest {
         return Stream.of(
                 arguments("commande avec client invalide", creerRequestCommandeAvecClientInvalide()),
                 arguments("commande avec adresse invalide", creerRequestCommandeAvecAddresseLivraisonInvalide()),
-                arguments("Cette commande n'a pas de produit", creerRequestCommandeSansItems())
-        );
+                arguments("Cette commande n'a pas de produit", creerRequestCommandeSansItems()));
     }
-
 }

@@ -4,14 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kitabe.commande_service.domaine.model.*;
 import com.kitabe.commande_service.web.controlleurs.CommandeController;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Service métier pour la gestion des événements de commande.
@@ -35,8 +33,10 @@ public class CommandeEvenementService {
      * @param commandeEvenementPublish    Le publisher pour envoyer les événements à RabbitMQ.
      * @param objectMapper                L'instance de {@link ObjectMapper} pour sérialiser/désérialiser les payloads JSON.
      */
-
-    public CommandeEvenementService(CommandeEvenementRepository commandeEvenementRepository, CommandeEvenementPublisher commandeEvenementPublish, ObjectMapper objectMapper) {
+    public CommandeEvenementService(
+            CommandeEvenementRepository commandeEvenementRepository,
+            CommandeEvenementPublisher commandeEvenementPublish,
+            ObjectMapper objectMapper) {
         this.commandeEvenementRepository = commandeEvenementRepository;
         this.commandeEvenementPublish = commandeEvenementPublish;
         this.objectMapper = objectMapper;
@@ -53,8 +53,7 @@ public class CommandeEvenementService {
     private String toJsonPayload(Object object) {
         try {
             return objectMapper.writeValueAsString(object);
-        }
-        catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
@@ -71,7 +70,7 @@ public class CommandeEvenementService {
      */
     public <T> T fromJsonPayload(String json, Class<T> type) {
         try {
-            return objectMapper.readValue(json,type);
+            return objectMapper.readValue(json, type);
         } catch (JsonProcessingException ex) {
             throw new RuntimeException(ex);
         }
@@ -84,28 +83,32 @@ public class CommandeEvenementService {
      *
      * @param evenement L'entité de l'événement de commande à publier.
      */
-    private void publishEvenement(CommandeEvenementEntite evenement){
-       CommandeEvenementType evenementType = evenement.getEvenementType();
-       switch (evenementType){
-           case COMMANDE_CREER:
-               CreerCommandeEvenement creerCommandeEvenement = fromJsonPayload(evenement.getPayload(), CreerCommandeEvenement.class);
-              commandeEvenementPublish.publish(creerCommandeEvenement);
-              break;
-           case COMMANDE_DELIVREE:
-               CommandeDelivrerEvenement commandeDelivrerEvenement = fromJsonPayload(evenement.getPayload(), CommandeDelivrerEvenement.class);
-               commandeEvenementPublish.publish(commandeDelivrerEvenement);
-               break;
-           case COMMANDE_ANNULEE:
-               CommandeAnnuleeEvenement commandeAnnuleeEvenement = fromJsonPayload(evenement.getPayload(),CommandeAnnuleeEvenement.class);
-               commandeEvenementPublish.publish(commandeAnnuleeEvenement);
-               break;
-           case COMMANDE_ECHEC_PROCESSUS:
-               CommandeErreurEvenement commandeErreurEvenement = fromJsonPayload(evenement.getPayload(),CommandeErreurEvenement.class);
-               commandeEvenementPublish.publish(commandeErreurEvenement);
-               break;
-           default:
-               log.warn("Type devenement commande inconnu:{}", evenementType);
-       }
+    private void publishEvenement(CommandeEvenementEntite evenement) {
+        CommandeEvenementType evenementType = evenement.getEvenementType();
+        switch (evenementType) {
+            case COMMANDE_CREER:
+                CreerCommandeEvenement creerCommandeEvenement =
+                        fromJsonPayload(evenement.getPayload(), CreerCommandeEvenement.class);
+                commandeEvenementPublish.publish(creerCommandeEvenement);
+                break;
+            case COMMANDE_DELIVREE:
+                CommandeDelivrerEvenement commandeDelivrerEvenement =
+                        fromJsonPayload(evenement.getPayload(), CommandeDelivrerEvenement.class);
+                commandeEvenementPublish.publish(commandeDelivrerEvenement);
+                break;
+            case COMMANDE_ANNULEE:
+                CommandeAnnuleeEvenement commandeAnnuleeEvenement =
+                        fromJsonPayload(evenement.getPayload(), CommandeAnnuleeEvenement.class);
+                commandeEvenementPublish.publish(commandeAnnuleeEvenement);
+                break;
+            case COMMANDE_ECHEC_PROCESSUS:
+                CommandeErreurEvenement commandeErreurEvenement =
+                        fromJsonPayload(evenement.getPayload(), CommandeErreurEvenement.class);
+                commandeEvenementPublish.publish(commandeErreurEvenement);
+                break;
+            default:
+                log.warn("Type devenement commande inconnu:{}", evenementType);
+        }
     }
 
     /**
@@ -113,12 +116,11 @@ public class CommandeEvenementService {
      * Cette méthode récupère tous les événements de la table {@code commande_evenements}, les publie via RabbitMQ,
      * puis les supprime de la base de données.
      */
-
-    public void publishCommandeOrder(){
+    public void publishCommandeOrder() {
         Sort sort = Sort.by("creerLe").ascending();
         List<CommandeEvenementEntite> even = commandeEvenementRepository.findAll(sort);
         log.info("{} evenements commande ont ete publier", even.size());
-        for(CommandeEvenementEntite evenement: even){
+        for (CommandeEvenementEntite evenement : even) {
             this.publishEvenement(evenement);
             commandeEvenementRepository.delete(evenement);
         }
@@ -150,7 +152,8 @@ public class CommandeEvenementService {
         } else if (evenement instanceof CommandeErreurEvenement) {
             commandeEvenementEntite.setEvenementType(CommandeEvenementType.COMMANDE_ECHEC_PROCESSUS);
         } else {
-            throw new IllegalArgumentException("Type d'événement non supporté : " + evenement.getClass().getName());
+            throw new IllegalArgumentException(
+                    "Type d'événement non supporté : " + evenement.getClass().getName());
         }
 
         this.commandeEvenementRepository.save(commandeEvenementEntite);

@@ -3,7 +3,6 @@ package com.kitabe.commande_service.domaine.model;
 import com.kitabe.commande_service.domaine.CommandeEntite;
 import com.kitabe.commande_service.domaine.CommandeItemsEntite;
 import com.kitabe.commande_service.domaine.CommandeStatus;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -27,14 +26,14 @@ public class CommandeMapper {
      * @param creerCommandeRequest La requête contenant les détails de la commande à créer ({@link CreerCommandeRequest}).
      * @return Une entité de commande ({@link CommandeEntite}) prête à être persistée.
      */
-    public static CommandeEntite convertToEntite(CreerCommandeRequest creerCommandeRequest){
+    public static CommandeEntite convertToEntite(CreerCommandeRequest creerCommandeRequest) {
         CommandeEntite commandeNouvelle = new CommandeEntite();
         commandeNouvelle.setCommandeNum(UUID.randomUUID().toString());
         commandeNouvelle.setStatus(CommandeStatus.NOUVEAU);
         commandeNouvelle.setClient(creerCommandeRequest.client());
         commandeNouvelle.setLivraisonAddresse(creerCommandeRequest.livraisonAddresse());
         Set<CommandeItemsEntite> commandeItems = new HashSet<>();
-        for(CommandeItems items : creerCommandeRequest.items()){
+        for (CommandeItems items : creerCommandeRequest.items()) {
             CommandeItemsEntite commandeItem = new CommandeItemsEntite();
             commandeItem.setCode(items.code());
             commandeItem.setNom(items.nom());
@@ -57,11 +56,10 @@ public class CommandeMapper {
      * @param commande L'entité de commande ({@link CommandeEntite}) à transformer.
      * @return Un objet de transfert de données ({@link CommandeDTO}) représentant la commande.
      */
-    public static CommandeDTO convertToDTO(CommandeEntite commande){
-        Set<CommandeItems> commandeItems = commande.getCommandeItems()
-                .stream()
-                .map(item -> new CommandeItems(item.getCode(),
-                        item.getNom(),item.getPrix(), item.getQuantite())).collect(Collectors.toSet());
+    public static CommandeDTO convertToDTO(CommandeEntite commande) {
+        Set<CommandeItems> commandeItems = commande.getCommandeItems().stream()
+                .map(item -> new CommandeItems(item.getCode(), item.getNom(), item.getPrix(), item.getQuantite()))
+                .collect(Collectors.toSet());
         return new CommandeDTO(
                 commande.getCommandeNum(),
                 commande.getPseudo(),
@@ -70,7 +68,6 @@ public class CommandeMapper {
                 commande.getLivraisonAddresse(),
                 commande.getStatus(),
                 commande.getCommentaire(),
-                commande.getCreationDate()
-        );
+                commande.getCreationDate());
     }
 }

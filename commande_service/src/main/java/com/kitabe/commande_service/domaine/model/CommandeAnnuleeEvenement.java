@@ -10,6 +10,5 @@ public record CommandeAnnuleeEvenement(
         Client client,
         Addresse addresse,
         String raison,
-        LocalDateTime creerLe
-) implements CommandeEvenement{
-}
+        LocalDateTime creerLe)
+        implements CommandeEvenement {}

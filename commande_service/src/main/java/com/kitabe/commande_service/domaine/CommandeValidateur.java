@@ -5,11 +5,10 @@ import com.kitabe.commande_service.clients.catalogue.ProduitServiceClient;
 import com.kitabe.commande_service.domaine.model.CommandeItems;
 import com.kitabe.commande_service.domaine.model.CreerCommandeRequest;
 import com.kitabe.commande_service.domaine.model.InvalideCommandeException;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
 
 /**
  * Composant de validation des commandes.
@@ -53,11 +52,14 @@ public class CommandeValidateur {
     void validateur(CreerCommandeRequest request) {
         Set<CommandeItems> commandeItems = request.items();
         for (CommandeItems commandeItem : commandeItems) {
-            Produit produit = produitServiceClient.getProduitByCode(commandeItem.code())
+            Produit produit = produitServiceClient
+                    .getProduitByCode(commandeItem.code())
                     .orElseThrow(() -> new InvalideCommandeException("Le code du produit est invalide"));
             if (commandeItem.prix().compareTo(produit.prix()) != 0) {
-                log.error("Les prix ne correspondent pas - prix actuel: {}, prix récupéré: {}",
-                        produit.prix(), commandeItem.prix());
+                log.error(
+                        "Les prix ne correspondent pas - prix actuel: {}, prix récupéré: {}",
+                        produit.prix(),
+                        commandeItem.prix());
                 throw new InvalideCommandeException("Les prix ne correspondent pas");
             }
         }

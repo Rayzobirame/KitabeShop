@@ -36,7 +36,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue annulationCommandeQueue() {
-        return  QueueBuilder.durable(properties.annulationCommandeQueue()).build(); // Durable
+        return QueueBuilder.durable(properties.annulationCommandeQueue()).build(); // Durable
     }
 
     @Bean
@@ -46,33 +46,29 @@ public class RabbitMQConfig {
 
     // Déclaration des bindings (liaisons entre exchange et queues)
     @Bean
-     Binding nouvelleCommandeBinding() {
-        return BindingBuilder
-                .bind(nouvelleCommandeQueue())
+    Binding nouvelleCommandeBinding() {
+        return BindingBuilder.bind(nouvelleCommandeQueue())
                 .to(exchange())
                 .with(properties.nouvelleCommandeQueue()); // Routing key pour nouvelle commande
     }
 
     @Bean
     public Binding delivranceCommandeBinding() {
-        return BindingBuilder
-                .bind(delivranceCommandeQueue())
+        return BindingBuilder.bind(delivranceCommandeQueue())
                 .to(exchange())
                 .with(properties.delivranceCommandeQueue()); // Routing key pour livraison
     }
 
     @Bean
     public Binding annulationCommandeBinding() {
-        return BindingBuilder
-                .bind(annulationCommandeQueue())
+        return BindingBuilder.bind(annulationCommandeQueue())
                 .to(exchange())
                 .with(properties.annulationCommandeQueue()); // Routing key pour annulation
     }
 
     @Bean
     public Binding erreurCommandeBinding() {
-        return BindingBuilder
-                .bind(erreurCommandeQueue())
+        return BindingBuilder.bind(erreurCommandeQueue())
                 .to(exchange())
                 .with(properties.erreurCommandeQueue()); // Routing key pour erreur
     }
@@ -88,5 +84,4 @@ public class RabbitMQConfig {
     public Jackson2JsonMessageConverter jackson2JsonMessageConverte(ObjectMapper objectMapper) {
         return new Jackson2JsonMessageConverter(objectMapper);
     }
-
 }

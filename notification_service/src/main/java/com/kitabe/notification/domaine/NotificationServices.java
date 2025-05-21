@@ -46,7 +46,8 @@ public class NotificationServices {
      * @param evenement Événement de création de commande contenant les informations du client et de la commande.
      */
     public void sendCommandeCreerNotification(CreerCommandeEvenement evenement) {
-        String message = """
+        String message =
+                """
                 ==========================================================
                 Notification pour commande créée
                 ----------------------------------------------------------
@@ -54,9 +55,12 @@ public class NotificationServices {
                 Votre commande numéro : %s a été créée avec succès.
                 L'équipe KitabeShop.
                 ==========================================================
-                """.formatted(evenement.client().prenom(), evenement.commandeNum());
-        log.info("Envoi d'une notification de création de commande à {} (commandeNum: {})",
-                evenement.client().email(), evenement.commandeNum());
+                """
+                        .formatted(evenement.client().prenom(), evenement.commandeNum());
+        log.info(
+                "Envoi d'une notification de création de commande à {} (commandeNum: {})",
+                evenement.client().email(),
+                evenement.commandeNum());
         sendEmail(evenement.client().email(), "Commande créée - KitabeShop", message);
     }
 
@@ -67,7 +71,8 @@ public class NotificationServices {
      * @param evenement Événement de livraison de commande contenant les informations du client et de la commande.
      */
     public void sendCommandeLivrerNotification(CommandeDelivrerEvenement evenement) {
-        String message = """
+        String message =
+                """
                 ==========================================================
                 Notification pour commande livrée
                 ----------------------------------------------------------
@@ -77,9 +82,12 @@ public class NotificationServices {
                 Merci pour votre confiance.
                 L'équipe KitabeShop.
                 ==========================================================
-                """.formatted(evenement.client().prenom(), evenement.commandeNum());
-        log.info("Envoi d'une notification de livraison de commande à {} (commandeNum: {})",
-                evenement.client().email(), evenement.commandeNum());
+                """
+                        .formatted(evenement.client().prenom(), evenement.commandeNum());
+        log.info(
+                "Envoi d'une notification de livraison de commande à {} (commandeNum: {})",
+                evenement.client().email(),
+                evenement.commandeNum());
         sendEmail(evenement.client().email(), "Commande livrée - KitabeShop", message);
     }
 
@@ -90,7 +98,8 @@ public class NotificationServices {
      * @param evenement Événement d'erreur de commande contenant les détails de l'erreur et de la commande.
      */
     public void sendCommandeErreurNotification(CommandeErreurEvenement evenement) {
-        String message = """
+        String message =
+                """
                 ==========================================================
                 Notification pour échec de commande
                 ----------------------------------------------------------
@@ -100,9 +109,12 @@ public class NotificationServices {
                 Merci.
                 L'équipe KitabeShop.
                 ==========================================================
-                """.formatted(evenement.commandeNum(), evenement.raison());
-        log.info("Envoi d'une notification d'erreur de commande à {} (commandeNum: {})",
-                evenement.client().email(), evenement.commandeNum());
+                """
+                        .formatted(evenement.commandeNum(), evenement.raison());
+        log.info(
+                "Envoi d'une notification d'erreur de commande à {} (commandeNum: {})",
+                evenement.client().email(),
+                evenement.commandeNum());
         sendEmail(evenement.client().email(), "Erreur de commande - KitabeShop", message);
     }
 
@@ -113,7 +125,8 @@ public class NotificationServices {
      * @param evenement Événement d'annulation de commande contenant les informations du client, de la commande et de la raison.
      */
     public void sendCommandeAnnulerNotification(CommandeAnnuleeEvenement evenement) {
-        String message = """
+        String message =
+                """
                 ==========================================================
                 Notification pour commande annulée
                 ----------------------------------------------------------
@@ -123,9 +136,12 @@ public class NotificationServices {
                 Merci pour votre confiance.
                 L'équipe KitabeShop.
                 ==========================================================
-                """.formatted(evenement.client().prenom(), evenement.commandeNum(), evenement.raison());
-        log.info("Envoi d'une notification d'annulation de commande à {} (commandeNum: {})",
-                evenement.client().email(), evenement.commandeNum());
+                """
+                        .formatted(evenement.client().prenom(), evenement.commandeNum(), evenement.raison());
+        log.info(
+                "Envoi d'une notification d'annulation de commande à {} (commandeNum: {})",
+                evenement.client().email(),
+                evenement.commandeNum());
         sendEmail(evenement.client().email(), "Commande annulée - KitabeShop", message);
     }
 
@@ -156,7 +172,8 @@ public class NotificationServices {
         // Validation de l'adresse d'expéditeur
         String fromEmail = properties.supportEmail();
         if (!StringUtils.hasText(fromEmail)) {
-            throw new IllegalStateException("L'adresse email d'expédition (supportEmail) n'est pas configurée dans les propriétés");
+            throw new IllegalStateException(
+                    "L'adresse email d'expédition (supportEmail) n'est pas configurée dans les propriétés");
         }
 
         try {

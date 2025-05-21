@@ -1,7 +1,7 @@
 package com.kitabe.commande_service.job;
 
-import com.kitabe.commande_service.domaine.CommandeEvenementService;
 import com.kitabe.commande_service.domaine.CommandeService;
+import java.time.Instant;
 import net.javacrumbs.shedlock.core.LockAssert;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 /**
  * Job planifié pour traiter les nouvelles commandes.
  * Cette classe est responsable de déclencher périodiquement le traitement des commandes ayant le statut NOUVEAU
@@ -35,7 +34,7 @@ public class CommandeProcessusJob {
      * La vérification {@link LockAssert#assertLocked()} assure que le verrou a été acquis avant l'exécution.
      */
     @Scheduled(cron = "${commande.nouveau-commande-Job-cron}")
-    @SchedulerLock(name="nouveauCommandeEvenement")
+    @SchedulerLock(name = "nouveauCommandeEvenement")
     void nouveauCommandeEvenement() {
         LockAssert.assertLocked();
         log.info("Publication de commandeEvenement a {}", Instant.now());

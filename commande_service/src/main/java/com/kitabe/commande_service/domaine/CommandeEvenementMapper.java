@@ -1,7 +1,6 @@
 package com.kitabe.commande_service.domaine;
 
 import com.kitabe.commande_service.domaine.model.*;
-
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
@@ -23,7 +22,7 @@ public class CommandeEvenementMapper {
      * @param commande L'entité de commande ({@link CommandeEntite}) à transformer en événement.
      * @return Un événement de création de commande ({@link CreerCommandeEvenement}) prêt à être publié.
      */
-    static CreerCommandeEvenement buildCommandeCreerSurEvenement(CommandeEntite commande){
+    static CreerCommandeEvenement buildCommandeCreerSurEvenement(CommandeEntite commande) {
         return new CreerCommandeEvenement(
                 UUID.randomUUID().toString(),
                 commande.getCommandeNum(),
@@ -41,7 +40,7 @@ public class CommandeEvenementMapper {
      * @param commande L'entité de commande ({@link CommandeEntite}) à transformer en événement.
      * @return Un événement de livraison de commande ({@link CommandeDelivrerEvenement}) prêt à être publié.
      */
-    static CommandeDelivrerEvenement buildCommandeDelivrerEvenement(CommandeEntite commande){
+    static CommandeDelivrerEvenement buildCommandeDelivrerEvenement(CommandeEntite commande) {
         return new CommandeDelivrerEvenement(
                 UUID.randomUUID().toString(),
                 commande.getCommandeNum(),
@@ -60,7 +59,7 @@ public class CommandeEvenementMapper {
      * @param raison   La raison de l'échec du traitement de la commande.
      * @return Un événement d'erreur de commande ({@link CommandeErreurEvenement}) prêt à être publié.
      */
-    static CommandeErreurEvenement buildCommandeErreurEvenement(CommandeEntite commande, String raison){
+    static CommandeErreurEvenement buildCommandeErreurEvenement(CommandeEntite commande, String raison) {
         return new CommandeErreurEvenement(
                 UUID.randomUUID().toString(),
                 commande.getCommandeNum(),
@@ -79,7 +78,7 @@ public class CommandeEvenementMapper {
      * @param raison   La raison de l'annulation de la commande.
      * @return Un événement d'annulation de commande ({@link CommandeAnnuleeEvenement}) prêt à être publié.
      */
-    static CommandeAnnuleeEvenement buildCommandeAnnuleeEvenement(CommandeEntite commande, String raison){
+    static CommandeAnnuleeEvenement buildCommandeAnnuleeEvenement(CommandeEntite commande, String raison) {
         return new CommandeAnnuleeEvenement(
                 UUID.randomUUID().toString(),
                 commande.getCommandeNum(),
@@ -97,9 +96,9 @@ public class CommandeEvenementMapper {
      * @param commandes L'entité de commande ({@link CommandeEntite}) contenant les éléments à transformer.
      * @return Un ensemble de {@link CommandeItems} représentant les éléments de la commande.
      */
-    private static Set<CommandeItems> getCommandeItems(CommandeEntite commandes){
-        return commandes.getCommandeItems().stream().map(item ->new CommandeItems(item.getCode()
-                , item.getNom(), item.getPrix(), item.getQuantite())).collect(Collectors.toSet());
-
+    private static Set<CommandeItems> getCommandeItems(CommandeEntite commandes) {
+        return commandes.getCommandeItems().stream()
+                .map(item -> new CommandeItems(item.getCode(), item.getNom(), item.getPrix(), item.getQuantite()))
+                .collect(Collectors.toSet());
     }
 }

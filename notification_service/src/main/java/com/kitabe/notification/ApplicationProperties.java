@@ -1,6 +1,5 @@
 package com.kitabe.notification;
 
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "notification")
@@ -10,8 +9,4 @@ public record ApplicationProperties(
         String nouvelleCommandeQueue,
         String delivranceCommandeQueue,
         String annulationCommandeQueue,
-        String erreurCommandeQueue
-){
-
-}
-
+        String erreurCommandeQueue) {}

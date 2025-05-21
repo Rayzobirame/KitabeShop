@@ -9,6 +9,4 @@ public record CommandeDelivrerEvenement(
         Set<CommandeItems> items,
         Client client,
         Addresse addresse,
-        LocalDateTime creerLe
-) {
-}
+        LocalDateTime creerLe) {}

@@ -2,7 +2,6 @@ package com.kitabe.commande_service.domaine.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kitabe.commande_service.domaine.CommandeStatus;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -30,9 +29,8 @@ public record CommandeDTO(
         Addresse addresse,
         CommandeStatus status,
         String commentaire,
-        LocalDateTime creationDate
+        LocalDateTime creationDate) {
 
-) {
     /**
      * Calcule le montant total de la commande.
      * Cette méthode additionne le coût de chaque article (prix unitaire multiplié par la quantité)
@@ -43,6 +41,8 @@ public record CommandeDTO(
      */
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public BigDecimal getTotalMontant() {
-        return items.stream().map(item->item.prix().multiply(BigDecimal.valueOf(item.quantite()))).reduce(BigDecimal.ZERO,BigDecimal::add);
+        return items.stream()
+                .map(item -> item.prix().multiply(BigDecimal.valueOf(item.quantite())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.4</version>
+        <version>3.3.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.kitabe</groupId>
@@ -115,6 +115,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -137,13 +141,14 @@
                 <configuration>
                     <image>
                         <name>${dockerImageName}</name>
-                        <builder>rayzobirame/builder:tiny</builder>
+                        <builder>paketobuildpacks/builder-jammy-java-tiny:latest</builder>
                     </image>
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>build-info</goal>
+                            <goal>build-image</goal>
                         </goals>
                     </execution>
                 </executions>
