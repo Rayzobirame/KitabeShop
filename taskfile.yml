@@ -63,4 +63,4 @@ tasks:
     vars:
       DURATION: '{{default 5 .DURATION}}'
     cmds:
-      - sleep {{.DURATION}}
+      - '{{if eq .GOOS "windows"}}powershell -Command Start-Sleep -Seconds {{.DURATION}}{{else}}sleep {{.DURATION}}{{end}}'
