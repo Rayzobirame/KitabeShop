@@ -9,8 +9,4 @@ public record ApplicationProperties(
         String nouvelleCommandeQueue,
         String delivranceCommandeQueue,
         String annulationCommandeQueue,
-        String erreurCommandeQueue
-){
-
-}
-
+        String erreurCommandeQueue) {}
