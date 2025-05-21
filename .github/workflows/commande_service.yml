@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       working-directory: ./commande_service
-      DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/kitabe-commande_service
+      DOCKER_IMAGE_NAME: ${{secrets.DOCKER_USERNAME}}/kitabe-commande_service
     defaults:
       run:
         working-directory: ${{ env.working-directory }}
@@ -40,8 +40,8 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}  # Ton username depuis les secrets
           password: ${{ secrets.DOCKER_HUB_TOKEN }}  # Ton token depuis les secrets
 
-      - if: ${{ github.ref == 'refs/heads/main' }}
       - name: Build and publish docker image
+          - if: ${{github.ref == 'refs/heads/main' }}
         run:
           ./mvnw spring-boot:build-image -DskipTests
           echo "Entrain de pousser l'image docker $DOCKER_IMAGE_NAME dans le Docker hub.."
