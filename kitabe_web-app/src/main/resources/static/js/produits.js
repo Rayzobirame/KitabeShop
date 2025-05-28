@@ -9,7 +9,7 @@ document.addEventListener('alpine:init', () => {
             this.loadProduit(this.pageNum)
         },
         loadProduit(pageNum){
-            $.getJSON("http://localhost:8989/catalogue/api/produits/" + pageNum, (res) => {
+            $.getJSON("http://localhost:8989/catalogue/api/produits?page=" + pageNum, (res) => {
                 console.log("Reponse produits:",res);
                 this.produits = res;
             });
