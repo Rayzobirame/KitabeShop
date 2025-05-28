@@ -34,14 +34,14 @@ jobs:
         run: ./mvnw -ntp verify
 
       - if: ${{ github.ref == 'refs/heads/main' }}
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3  # Utilise la version 3 de l’action
+        name: Login to Docker Hub
+        uses: docker/login-action@v3
         with:
-            username: ${{ secrets.DOCKER_HUB_USERNAME }}  # Ton username depuis les secrets
-            password: ${{ secrets.DOCKER_HUB_TOKEN }}  # Ton token depuis les secrets
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - if: ${{ github.ref == 'refs/heads/main' }}
-      - name: Build and publish docker image
-        run:
+        name: Build and publish docker image
+        run: |
           ./mvnw spring-boot:build-image -DskipTests
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/kitabe_catalogue_service
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/kitabe-catalogue_service
