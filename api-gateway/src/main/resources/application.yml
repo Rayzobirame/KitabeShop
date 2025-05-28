@@ -24,11 +24,11 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: false
+          enabled: true
       globalcors:
         cors-configurations:
           '[/**]':
-            allowed-origins: "http://localhost:3000"
+            allowed-origins: "*"
             allowed-methods: "*"
             allowed-headers: "*"
             allow-credentials: false
@@ -39,29 +39,23 @@ spring:
           predicates:
             - Path=/catalogue/**
           filters:
-            - RewritePath=/catalogue/(?<segment>.*), /${segment}
+            - RewritePath=/catalogue/?(?<segment>.*), /${segment}
         # Route pour commande_service
         - id: commande_service
           uri: ${COMMANDE_SERVICE_URL:http://localhost:8082}
           predicates:
             - Path=/commande/**
           filters:
-            - RewritePath=/commande/(?<segment>.*), /${segment}
+            - RewritePath=/commande/?(?<segment>.*), /${segment}
         # Route pour la documentation Swagger/OpenAPI de catalogue_service
-        - id: openapi_catalogue
-          uri: ${CATALOGUE_SERVICE_URL:http://localhost:8081}
+        - id: openapi
+          uri: http://localhost:${server.port}
           predicates:
-            - Path=/v3/api-docs/catalogue
+            - Path=/v3/api-docs/**
           filters:
-            - RewritePath=/v3/api-docs/catalogue, /v3/api-docs
-        # Route pour la documentation Swagger/OpenAPI de commande_service
-        - id: openapi_commande
-          uri: ${COMMANDE_SERVICE_URL:http://localhost:8082}
-          predicates:
-            - Path=/v3/api-docs/commande
-          filters:
-            - RewritePath=/v3/api-docs/commande, /v3/api-docs
-
+            - RewritePath=/v3/api-docs/?(?<segment>.*), /${segment}/v3/api-docs
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Methods Access-Control-Allow-Headers RETAIN FIRST
 # Configuration de Springdoc Swagger UI
 springdoc:
   swagger-ui:
