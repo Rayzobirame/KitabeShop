@@ -7,59 +7,30 @@ spring.application.name=api-gateway
 spring.mvc.problemdetails.enabled=true
 
 # Spring Cloud Gateway Configuration
-spring.cloud.discovery.enabled=true
 spring.cloud.gateway.discovery.locator.enabled=true
 spring.cloud.gateway.discovery.locator.lower-case-service-id=true
 
 # CORS Configuration
-spring.cloud.gateway.globalcors.cors-configurations.[/**].allowed-origins=http://localhost:3000
-spring.cloud.gateway.globalcors.cors-configurations.[/**].allowed-methods=*
-spring.cloud.gateway.globalcors.cors-configurations.[/**].allowed-headers=*
-spring.cloud.gateway.globalcors.cors-configurations.[/**].allow-credentials=false
+spring.cloud.gateway.globalcors.cors-configurations.["[/**]"].allowed-origins="*"
+spring.cloud.gateway.globalcors.cors-configurations.["[/**]"].allowed-methods="*"
+spring.cloud.gateway.globalcors.cors-configurations.["[/**]"].allowed-headers="*"
+spring.cloud.gateway.globalcors.cors-configurations.["[/**]"].allow-credentials=false
 
 # Routes Configuration
-spring.cloud.gateway.routes[0].id=catalogue-service
-spring.cloud.gateway.routes[0].uri=${CATALOGUE_SERVICE_URL://localhost:8081}
-spring.cloud.gateway.routes[0].predicates[0]=Path=/api/produits/**
-spring.cloud.gateway.routes[0].filters[0]=RewritePath=/api/produits/(?<segment>.*), /${segment}
-spring.cloud.gateway.routes[0].filters[1].name=RequestRateLimiter
-spring.cloud.gateway.routes[0].filters[1].args.redis-rate-limiter.replenishRate=10
-spring.cloud.gateway.routes[0].filters[1].args.redis-rate-limiter.burstCapacity=20
+spring.cloud.gateway.routes[0].id=catalogue_service
+spring.cloud.gateway.routes[0].uri=${CATALOGUE_SERVICE_URL:http://localhost:8081}
+spring.cloud.gateway.routes[0].predicates[0]=Path=/catalogue/**
+spring.cloud.gateway.routes[0].filters[0]=RewritePath=/catalogue/(?<segment>.*), /${segment}
 
-spring.cloud.gateway.routes[1].id=commande-service
-spring.cloud.gateway.routes[1].uri=${COMMANDE_SERVICE_URL:http://localhost:8082}//commande-service
-spring.cloud.gateway.routes[1].predicates[0]=Path=/api/commande/**
-spring.cloud.gateway.routes[1].filters[0]=RewritePath=/api/commande/(?<segment>.*), /${segment}
-spring.cloud.gateway.routes[1].filters[1].name=RequestRateLimiter
-spring.cloud.gateway.routes[1].filters[1].args.redis-rate-limiter.replenishRate=10
-spring.cloud.gateway.routes[1].filters[1].args.redis-rate-limiter.burstCapacity=20
+spring.cloud.gateway.routes[1].id=commande_service
+spring.cloud.gateway.routes[1].uri=${COMMANDE_SERVICE_URL:http://localhost:8082}
+spring.cloud.gateway.routes[1].predicates[0]=Path=/commande/**
+spring.cloud.gateway.routes[1].filters[0]=RewritePath=/commande/(?<segment>.*), /${segment}
 
-spring.cloud.gateway.routes[2].id=notification-service
-spring.cloud.gateway.routes[2].uri=lb://notification-service
-spring.cloud.gateway.routes[2].predicates[0]=Path=/api/notifications/**
-spring.cloud.gateway.routes[2].filters[0]=RewritePath=/api/notifications/(?<segment>.*), /${segment}
-spring.cloud.gateway.routes[2].filters[1].name=RequestRateLimiter
-spring.cloud.gateway.routes[2].filters[1].args.redis-rate-limiter.replenishRate=10
-spring.cloud.gateway.routes[2].filters[1].args.redis-rate-limiter.burstCapacity=20
-
-spring.cloud.gateway.routes[3].id=openapi
-spring.cloud.gateway.routes[3].uri=http://localhost:${server.port}
-spring.cloud.gateway.routes[3].predicates[0]=Path=/v3/api-docs/**
-spring.cloud.gateway.routes[3].filters[0]=RewritePath=/v3/api-docs/(?<segment>.*), /${segment}
-
-# Redis Configuration (for Rate Limiting)
-spring.redis.host=localhost
-spring.redis.port=6379
-
-# Spring Cloud Sleuth Configuration (Tracing)
-spring.sleuth.sampler.probability=1.0
-
-# Security Configuration (JWT, optional)
-spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8080/auth/realms/your-realm
-
-# Eureka Configuration
-eureka.client.service-url.defaultZone=http://localhost:8761/eureka/
-eureka.instance.prefer-ip-address=true
+spring.cloud.gateway.routes[2].id=openapi
+spring.cloud.gateway.routes[2].uri=//http://localhost:${server.port}
+spring.cloud.gateway.routes[2].predicates[0]=Path=/v3/api-docs/**
+spring.cloud.gateway.routes[2].filters[0]=RewritePath=/v3/api-docs/(?<segment>.*), /${segment}
 
 # Actuator Configuration
 management.endpoints.web.exposure.include=*
@@ -67,12 +38,12 @@ management.endpoint.health.show-details=always
 
 # Springdoc Swagger UI Configuration
 springdoc.swagger-ui.use-root-path=true
+
 springdoc.swagger-ui.urls[0].name=catalogue
 springdoc.swagger-ui.urls[0].url=/v3/api-docs/produits
+
 springdoc.swagger-ui.urls[1].name=commande
 springdoc.swagger-ui.urls[1].url=/v3/api-docs/commande
-springdoc.swagger-ui.urls[2].name=notification
-springdoc.swagger-ui.urls[2].url=/v3/api-docs/notifications
 
 # Logging Configuration (with Tracing)
 logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} [%X{traceId}/%X{spanId}] %-5level %logger{36} - %msg%n
