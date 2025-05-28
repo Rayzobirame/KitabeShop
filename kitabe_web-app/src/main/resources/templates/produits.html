@@ -8,10 +8,10 @@
     <div th:x-data="|initData('${pageNum}')|">
         <div th:replace="~{fragments/pagination :: pagination}"></div>
         <div class="row row-cols-1 row-cols-md-5">
-            <template x-for="produit for produits.data">
+            <template x-for="produit in produits.data">
                 <div class="col mb-3">
                     <div class="cart h-100 produits">
-                        <img :src="produit.imageUrl" class="cart-img-top" height="300" width="200"/>
+                        <img :src="produit.images" class="cart-img-top" height="300" width="200"/>
                         <div class="cart-body">
                             <h5 class="cart-body" data-toogle="tooltip" data-placement="top" x-text="produit.nom">produit.nom</h5>
                             <h1 class="cart-text" data-toogle="tooltip" data-placement="top" x-text="'Prix: $'+produit.prix">produit.prix</h1>
