@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+</head>
+<body>
+<div layout:fragment="content">
+    <div th:x-data="|initData()|">
+        <div class="col-md-8 offset-md-2">
+            <div x-show="panier.items.lenght ==0" class="pb-3">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Prix</th>
+                        <th scope="col">Quantite</th>
+                        <th scope="col">Prix total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <template x-for="item in panier.items">
+                        <tr>
+                            <td x-text="item.nom">Nom</td>
+                            <td x-text="item.prix">Prix</td>
+                            <td>
+                                <input type="number" x-model="item.quantite" min="0"
+                                       @change="updateItemQuantite(item.code,$event.target.value)"/>
+                            </td>
+                            <td x-text="item.quantite * item.prix">Prix total</td>
+                        </tr>
+                    </template>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th colspan="3">Nom</th>
+                        <th colspan="1" style="">Montant total <span x-text="panier.totalMontant">PanierTotal</span>
+                        </th>
+                    </tr>
+                    </tfoot>
+                </table>
+                <form class="row g-3" method="post" @submit.prevent="creerCommande">
+                    <div class="col-md-6">
+                        <label for="clientNom" class="form-label">Client Nom</label>
+                        <input type="text" class="form-control" id="clientNom" x-model="commandeForm.client.nom"
+                               name="clientNom" value="">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="clientMail" class="form-label">Client Email</label>
+                        <input type="email" class="form-control" id="clientMail" x-model="commandeForm.client.email"
+                               name="clientEmail" value="">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="livraisonAddresse1" class="form-label">Adresse de Livraison 1</label>
+                        <input class="form-control" id="livraisonAddresse1" name="livraisonAddresse1"
+                               x-model="commandeForm.livraisonAddresse.addresse1" value="">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="livraisonAddresse2" class="form-label">Adresse de Livraison 2</label>
+                        <input class="form-control" id="livraisonAddresse2" name="livraisonAddresse2"
+                               x-model="commandeForm.livraisonAddresse.addresses2" value="">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="livraisonAddresseVille" class="form-label">Ville de Livraison </label>
+                        <input class="form-control" id="livraisonAddresseVille" name="livraisonAddresseVille"
+                               x-model="commandeForm.livraisonAddresse.ville" value="">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="livraisonAddresseEtat" class="form-label">Departement de Livraison </label>
+                        <input class="form-control" id="livraisonAddresseEtat" name="livraisonAddresseEtat"
+                               x-model="commandeForm.livraisonAddresse.etat" value="">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="livraisonAddressePays" class="form-label">Pays de Livraison </label>
+                        <input class="form-control" id="livraisonAddressePays" name="livraisonAddressePays"
+                               x-model="commandeForm.livraisonAddresse.pays" value="">
+                    </div>
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-primary">Passer la commande</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div layout:fragment="pageScripts">
+    <script src="/js/panierStore.js"></script>
+</div>
+</body>
+</html>
