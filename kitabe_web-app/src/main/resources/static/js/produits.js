@@ -14,5 +14,8 @@ document.addEventListener('alpine:init', () => {
                 this.produits = res;
             });
         },
+        addAuPanier(produit){
+            addProduitAuPanier(produit);
+        }
     }))
 });
