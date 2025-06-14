@@ -1,5 +1,4 @@
-package com.kitabe.commande_service.domaine.model;
+package com.kitabe.kitabe_webapp.commande;
 
-import com.kitabe.commande_service.domaine.CommandeStatus;
 
 public record CommandeSommaire(String commandeNum, CommandeStatus status) {}
