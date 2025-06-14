@@ -1,7 +1,8 @@
-package com.kitabe.commande_service.domaine.model;
+package com.kitabe.kitabe_webapp.commande;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
+
 import java.util.Set;
 
 public record CreerCommandeRequest(
