@@ -27,6 +27,7 @@ tasks:
       - "{{.MVNW}} -pl commande_service spring-boot:build-image -DskipTests"
       - "{{.MVNW}} -pl notification_service spring-boot:build-image -DskipTests"
       - "{{.MVNW}} -pl api-gateway spring-boot:build-image -DskipTests"
+      - "{{.MVNW}} -pl kitabe_web-app spring-boot:build-image -DskipTests"
 
   start_infra:
     cmds:
