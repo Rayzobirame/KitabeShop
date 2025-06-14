@@ -1,4 +1,4 @@
-package com.kitabe.commande_service.domaine.model;
+package com.kitabe.kitabe_webapp.commande;
 
 import jakarta.validation.constraints.NotBlank;
 
