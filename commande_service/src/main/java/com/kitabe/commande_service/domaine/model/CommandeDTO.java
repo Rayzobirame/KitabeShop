@@ -26,7 +26,7 @@ public record CommandeDTO(
         String user,
         Set<CommandeItems> items,
         Client client,
-        Addresse addresse,
+        Addresse livraisonAddresse,
         CommandeStatus status,
         String commentaire,
         LocalDateTime creationDate) {

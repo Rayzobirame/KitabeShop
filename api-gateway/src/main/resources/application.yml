@@ -28,32 +28,30 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowed-origins: "*"
-            allowed-methods: "*"
-            allowed-headers: "*"
-            allow-credentials: false
+            allowedOrigins: "*"
+            allowedMethods: "GET,HEAD,POST,OPTIONS"
+            allowedHeaders: "*"
+            allowCredentials: false
       routes:
         # Route pour catalogue_service
         - id: catalogue_service
           uri: ${CATALOGUE_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/catalogue/**
+            - Method=GET,POST,OPTIONS
           filters:
             - RewritePath=/catalogue/?(?<segment>.*), /${segment}
         # Route pour commande_service
         - id: commande_service
           uri: ${COMMANDE_SERVICE_URL:http://localhost:8082}
           predicates:
-            - Path=/commande/**
+            - Path=/commandes/**
+            - Method=GET,POST,OPTIONS
           filters:
-            - RewritePath=/commande/?(?<segment>.*), /${segment}
-        # Route pour la documentation Swagger/OpenAPI de catalogue_service
-        - id: openapi
-          uri: http://localhost:${server.port}
-          predicates:
-            - Path=/v3/api-docs/**
-          filters:
-            - RewritePath=/v3/api-docs/?(?<segment>.*), /${segment}/v3/api-docs
+            - RewritePath=/commandes/?(?<segment>.*), /${segment}
+            - AddResponseHeader=Access-Control-Allow-Origin, *
+            - AddResponseHeader=Access-Control-Allow-Methods, GET,POST,OPTIONS
+            - AddResponseHeader=Access-Control-Allow-Headers, *
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Methods Access-Control-Allow-Headers RETAIN FIRST
 # Configuration de Springdoc Swagger UI
@@ -66,7 +64,10 @@ springdoc:
       - name: commande
         url: /v3/api-docs/commande
 
-# Configuration des logs
+# Configuration des logs pour déboguer
 logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.web: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%X{traceId}/%X{spanId}] %-5level %logger{36} - %msg%n"
