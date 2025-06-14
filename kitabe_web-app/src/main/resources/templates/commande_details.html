@@ -6,78 +6,97 @@
 <body>
 <div layout:fragment="content">
     <div th:x-data="|initData('${commandeNum}')|">
-        <h2>Votre commande a etre place avec succees</h2>
-        <h4>Numero de commande <span x-text="commandeDetails.commandeNum">Commande Numero</span></h4>
-        <h4>Status de la commande <span x-text="commandeDetails.status">Commande Status</span></h4>
-        <hr/>
-        <div class="pb-3">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col">Nom</th>
-                    <th scope="col">Prix</th>
-                    <th scope="col">Quantite</th>
-                    <th scope="col">Prix total</th>
-                </tr>
-                </thead>
-                <tbody>
-                <template x-for="item in commandeDetails.items">
+        <!-- Afficher un message d'erreur si la requête échoue -->
+        <div x-show="error" class="alert alert-danger" role="alert">
+            <span x-text="error"></span>
+        </div>
+
+        <!-- Afficher les détails de la commande si aucune erreur -->
+        <div x-show="!error">
+            <h2>Votre commande a été placée avec succès</h2>
+            <h4>Numéro de commande : <span x-text="commandeDetails.commandeNum">Commande Numéro</span></h4>
+            <h4>Statut de la commande : <span x-text="commandeDetails.status">Commande Statut</span></h4>
+            <hr/>
+            <div class="pb-3">
+                <!-- Tableau des items -->
+                <table class="table">
+                    <thead>
                     <tr>
-                        <td x-text="item.nom">Nom</td>
-                        <td x-text="item.prix">Prix</td>
-                        <td x-text="item.quantite">Quantite</td>
-                        <td x-text="item.quantite * item.prix">Prix total</td>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Prix</th>
+                        <th scope="col">Quantité</th>
+                        <th scope="col">Prix total</th>
                     </tr>
-                </template>
-                </tbody>
-                <tfoot>
-                <tr>
-                    <th colspan="3">Nom</th>
-                    <th colspan="1" style="">Montant total <span x-text="commandeDetails.totalMontant">PanierTotal</span>
-                    </th>
-                </tr>
-                </tfoot>
-            </table>
-            <form class="row g-3" method="post" @submit.prevent="creerCommande">
-                <div class="col-md-6">
-                    <label for="clientNom" class="form-label">Client Nom</label>
-                    <input type="text" class="form-control" id="clientNom" x-model="commandeDetails.client.nom"
-                           name="clientNom" value="" readonly>
-                </div>
-                <div class="col-md-6">
-                    <label for="clientMail" class="form-label">Client Email</label>
-                    <input type="email" class="form-control" id="clientMail" x-model="commandeDetails.client.email"
-                           name="clientEmail" value="" readonly>
-                </div>
-                <div class="col-md-6">
-                    <label for="livraisonAddresse1" class="form-label">Adresse de Livraison 1</label>
-                    <input class="form-control" id="livraisonAddresse1" name="livraisonAddresse1"
-                           x-model="commandeDetails.livraisonAddresse.addresse1" value="" readonly>
-                </div>
-                <div class="col-md-6">
-                    <label for="livraisonAddresse2" class="form-label">Adresse de Livraison 2</label>
-                    <input class="form-control" id="livraisonAddresse2" name="livraisonAddresse2"
-                           x-model="commandeDetails.livraisonAddresse.addresses2" value="" readonly>
-                </div>
-                <div class="col-md-6">
-                    <label for="livraisonAddresseVille" class="form-label">Ville de Livraison </label>
-                    <input class="form-control" id="livraisonAddresseVille" name="livraisonAddresseVille"
-                           x-model="commandeDetails.livraisonAddresse.ville" value="" readonly>
-                </div>
-                <div class="col-md-6">
-                    <label for="livraisonAddresseEtat" class="form-label">Departement de Livraison </label>
-                    <input class="form-control" id="livraisonAddresseEtat" name="livraisonAddresseEtat"
-                           x-model="commandeDetails.livraisonAddresse.etat" value="" readonly>
-                </div>
-                <div class="col-md-6">
-                    <label for="livraisonAddressePays" class="form-label">Pays de Livraison </label>
-                    <input class="form-control" id="livraisonAddressePays" name="livraisonAddressePays"
-                           x-model="commandeDetails.livraisonAddresse.pays" value="" readonly>
-                </div>
-                <div class="col-md-6">
-                    <button type="submit" class="btn btn-primary">Passer la commande</button>
-                </div>
-            </form>
+                    </thead>
+                    <tbody>
+                    <template x-for="item in commandeDetails.items">
+                        <tr>
+                            <td x-text="item.nom">Nom</td>
+                            <td x-text="item.prix">Prix</td>
+                            <td x-text="item.quantite">Quantité</td>
+                            <td x-text="item.quantite * item.prix">Prix total</td>
+                        </tr>
+                    </template>
+                    <!-- Message si aucun item -->
+                    <tr x-show="!commandeDetails.items || commandeDetails.items.length === 0">
+                        <td colspan="4" class="text-center">Aucun article dans cette commande.</td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th colspan="3">Total</th>
+                        <th colspan="1">
+                            Montant total : <span x-text="commandeDetails.totalMontant">0</span>
+                        </th>
+                    </tr>
+                    </tfoot>
+                </table>
+                <form class="row g-3" method="post" @submit.prevent="creerCommande">
+                    <div class="col-md-6">
+                        <label class="form-label">Client Nom</label>
+                        <input type="text" class="form-control" x-model="commandeDetails.client.nom" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Client Prénom</label>
+                        <input type="text" class="form-control" x-model="commandeDetails.client.prenom" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Client Email</label>
+                        <input type="email" class="form-control" x-model="commandeDetails.client.email" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Client Téléphone</label>
+                        <input type="text" class="form-control" x-model="commandeDetails.client.telephone" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Adresse de Livraison 1</label>
+                        <input class="form-control" x-model="commandeDetails.livraisonAddresse.addresse1" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Adresse de Livraison 2</label>
+                        <input class="form-control" x-model="commandeDetails.livraisonAddresse.addresse2" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Code Postal</label>
+                        <input class="form-control" x-model="commandeDetails.livraisonAddresse.addressePostal" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Ville de Livraison</label>
+                        <input class="form-control" x-model="commandeDetails.livraisonAddresse.ville" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Région de Livraison</label>
+                        <input class="form-control" x-model="commandeDetails.livraisonAddresse.region" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Pays de Livraison</label>
+                        <input class="form-control" x-model="commandeDetails.livraisonAddresse.pays" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-primary">Passer la commande</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
