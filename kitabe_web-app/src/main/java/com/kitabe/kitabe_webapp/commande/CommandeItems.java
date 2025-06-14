@@ -1,8 +1,9 @@
-package com.kitabe.commande_service.domaine.model;
+package com.kitabe.kitabe_webapp.commande;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
 
 public record CommandeItems(
