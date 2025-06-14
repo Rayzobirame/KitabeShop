@@ -9,7 +9,7 @@ const KITABESHOP_STATE_KEY = "KITABESHOP_STATE";
 const getPanier = function () {
     let panier = localStorage.getItem(KITABESHOP_STATE_KEY);
     if (!panier) {
-        panier = JSON.stringify({ item: [], totalMontant: 0 }); // Initialise un panier vide
+        panier = JSON.stringify({ item: [], totalMontant: 0 });
         localStorage.setItem(KITABESHOP_STATE_KEY, panier);
     }
     return JSON.parse(panier);
@@ -23,16 +23,13 @@ const addProduitAuPanier = function (produit) {
     let panier = getPanier();
     let panierItem = panier.item.find((itemModel) => itemModel.code === produit.code);
     if (panierItem) {
-        panierItem.quantite = parseInt(panierItem.quantite) + 1; // Incrémente la quantité
+        panierItem.quantite = parseInt(panierItem.quantite) + 1;
     } else {
-        // Ajoute un nouveau produit avec une quantité initiale de 1
-        //panier.item.push({ code: produit.code, nom: produit.nom, prix: produit.prix, quantite: 1 });
-        panier.item.push(Object.assign({}, produit, { quantite:1}));
+        panier.item.push(Object.assign({}, produit, { quantite: 1 }));
     }
-    // Met à jour le totalMontant
     panier.totalMontant = getPanierTotal();
     localStorage.setItem(KITABESHOP_STATE_KEY, JSON.stringify(panier));
-    updatePanierItemCount(); // Met à jour l'affichage du nombre d'items
+    updatePanierItemCount();
 };
 
 /**
@@ -44,17 +41,15 @@ const addProduitAuPanier = function (produit) {
 const updateProduitQuantite = function (code, quantite) {
     let panier = getPanier();
     if (quantite < 1) {
-        // Supprime le produit si la quantité est < 1
         panier.item = panier.item.filter((itemModel) => itemModel.code !== code);
     } else {
         let panierItem = panier.item.find((itemModel) => itemModel.code === code);
         if (panierItem) {
-            panierItem.quantite = parseInt(quantite); // Met à jour la quantité
+            panierItem.quantite = parseInt(quantite);
         } else {
             console.log("Le code de ce produit n'est pas prêt à être placé dans une commande, ignoré.");
         }
     }
-    // Met à jour le totalMontant
     panier.totalMontant = getPanierTotal();
     localStorage.setItem(KITABESHOP_STATE_KEY, JSON.stringify(panier));
     updatePanierItemCount();
@@ -82,17 +77,17 @@ const clearPanier = function () {
 
 /**
  * Met à jour l'affichage du nombre total d'items dans le panier.
- * Utilise Alpine.js pour manipuler le DOM au lieu de jQuery.
  */
 function updatePanierItemCount() {
     let panier = getPanier();
     let count = 0;
     panier.item.forEach((itemModel) => {
-        count += itemModel.quantite; // Incrémente avec la quantité de chaque item
+        count += itemModel.quantite;
     });
-    $('#panier-item-count').text('(' + count + ')');
-    // Met à jour un élément avec Alpine.js (exemple : <span x-text="panierItemCount">)
-    //document.querySelector('#panier-item-count').textContent = `(${count})`;
+    const element = document.querySelector('#cart-item-count');
+    if (element) {
+        element.textContent = `(${count})`;
+    }
 }
 
 /**
@@ -108,23 +103,89 @@ function getPanierTotal() {
     return totalMontant;
 }
 
-// Initialisation avec Alpine.js (facultatif, si intégré dans une page)
+// Initialisation avec Alpine.js
 document.addEventListener('alpine:init', () => {
     Alpine.data('panier', () => ({
+        panier: { item: [], totalMontant: 0 },
+        commandeForm: {
+            pseudo: "utilisateur",
+            client: {
+                nom: "Camara",
+                prenom: "Birame",
+                email: "Birame@gmail.com",
+                telephone: "772883172"
+            },
+            livraisonAddresse: {
+                addresse1: "Thiaroye waounde",
+                addresse2: "Grand Dakar",
+                addressePostal: "BP 90",
+                ville: "Waounde",
+                region: "Matam",
+                pays: "Senegal"
+            }
+        },
+
         init() {
-            updatePanierItemCount(); // Initialise l'affichage au chargement
+            updatePanierItemCount();
+            this.loadPanier();
         },
-        addToPanier(produit) {
-            addProduit(produit);
+
+        loadPanier() {
+            this.panier = getPanier();
+            this.panier.totalMontant = getPanierTotal();
         },
-        updateQuantite(code, quantite) {
+
+        updateItemQuantite(code, quantite) {
             updateProduitQuantite(code, quantite);
+            this.loadPanier();
         },
+
         removeFromPanier(code) {
             deleteProduit(code);
+            this.loadPanier();
         },
-        clear() {
+
+        removePanier() {
             clearPanier();
+            this.loadPanier();
+        },
+
+        creerCommande() {
+            const commandeItems = this.panier.item.map(item => ({
+                code: item.code,
+                nom: item.nom,
+                prix: item.prix,
+                quantite: item.quantite
+            }));
+
+            let commande = {
+                pseudo: this.commandeForm.pseudo,
+                client: this.commandeForm.client,
+                livraisonAddresse: this.commandeForm.livraisonAddresse,
+                items: commandeItems,
+                totalMontant: this.panier.totalMontant
+            };
+
+            $.ajax({
+                url: '/api/commande',
+                method: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(commande),
+                success: (resp) => {
+                    console.log("Réponse reçue:", resp);
+                    this.removePanier();
+                    window.location.href = "/commandes/" + resp.commandeNum; // Changé window.location pour window.location.href
+                },
+                error: (xhr, status, error) => {
+                    console.error("Erreur lors de la validation de la commande:", {
+                        status: status,
+                        error: error,
+                        responseText: xhr.responseText,
+                        statusCode: xhr.status
+                    });
+                }
+            });
         }
     }));
 });
