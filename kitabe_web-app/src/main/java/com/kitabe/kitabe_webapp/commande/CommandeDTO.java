@@ -1,7 +1,7 @@
-package com.kitabe.commande_service.domaine.model;
+package com.kitabe.kitabe_webapp.commande;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.kitabe.commande_service.domaine.CommandeStatus;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -16,7 +16,7 @@ import java.util.Set;
  * @param user          Le pseudo de l'utilisateur ayant passé la commande.
  * @param items         L'ensemble des articles de la commande ({@link CommandeItems}).
  * @param client        Les informations du client ({@link Client}).
- * @param addresse      L'adresse de livraison ({@link Addresse}).
+ * @param livraisonAddresse      L'adresse de livraison ({@link Addresse}).
  * @param status        Le statut de la commande ({@link CommandeStatus}).
  * @param commentaire   Un commentaire optionnel associé à la commande.
  * @param creationDate  La date et l'heure de création de la commande.
