@@ -97,6 +97,22 @@ services:
     networks:
       - kitabe_network
 
+  kitabe_web-app:
+    image: rayzobirame/kitabe_web-app
+    container_name: kitabe_web-app
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - KITABE_API_GATEWAY_URL=http://api-gateway:8989
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - kitabe_network
+
 networks:
   kitabe_network:
     driver: bridge
