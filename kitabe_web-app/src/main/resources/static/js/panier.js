@@ -36,7 +36,7 @@ document.addEventListener("alpine:init", () => {
         creerCommande(){
             let commande = Object.assign({}, this.commandeForm,{item:[], totalMontant:0});
             $.ajax({
-                url:'http://localhost:8989/commande/api/commandes',
+                url:apiGatewayUrl+'/commande/api/commandes',
                 method:'POST',
                 dataType:'json',
                 contentType:'application/json',
