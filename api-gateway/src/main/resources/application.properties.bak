@@ -28,7 +28,7 @@ spring.cloud.gateway.routes[1].predicates[0]=Path=/commande/**
 spring.cloud.gateway.routes[1].filters[0]=RewritePath=/commande/(?<segment>.*), /${segment}
 
 spring.cloud.gateway.routes[2].id=openapi
-spring.cloud.gateway.routes[2].uri=//http://localhost:${server.port}
+spring.cloud.gateway.routes[2].uri=/http://localhost:${server.port}
 spring.cloud.gateway.routes[2].predicates[0]=Path=/v3/api-docs/**
 spring.cloud.gateway.routes[2].filters[0]=RewritePath=/v3/api-docs/(?<segment>.*), /${segment}
 
