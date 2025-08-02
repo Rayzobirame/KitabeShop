@@ -10,10 +10,25 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Classe de configuration de la sécurité pour l'application Spring, permettant de définir les règles
+ * d'authentification et d'autorisation. Elle utilise Spring Security pour configurer une chaîne de filtres
+ * de sécurité basée sur OAuth2 et désactive certaines fonctionnalités comme CORS et CSRF pour un contexte
+ * spécifique, tout en imposant une gestion sans état des sessions.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
+    /**
+     * Crée et configure une chaîne de filtres de sécurité ({@link SecurityFilterChain}) pour l'application.
+     * Cette méthode configure les endpoints accessibles sans authentification, active l'authentification
+     * pour toutes les autres requêtes, utilise une politique de session sans état, désactive CORS et CSRF,
+     * et configure le serveur de ressources OAuth2 avec JWT par défaut.
+     *
+     * @param http l'objet HttpSecurity pour configurer les règles de sécurité
+     * @return la chaîne de filtres de sécurité configurée
+     * @throws Exception en cas d'erreur lors de la configuration
+     */
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(c -> c.requestMatchers(
