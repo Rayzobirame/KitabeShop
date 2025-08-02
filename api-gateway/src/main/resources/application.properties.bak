@@ -28,13 +28,18 @@ spring.cloud.gateway.routes[1].predicates[0]=Path=/commande/**
 spring.cloud.gateway.routes[1].filters[0]=RewritePath=/commande/(?<segment>.*), /${segment}
 
 spring.cloud.gateway.routes[2].id=openapi
-spring.cloud.gateway.routes[2].uri=/http://localhost:${server.port}
+spring.cloud.gateway.routes[2].uri=http://localhost:${server.port}
 spring.cloud.gateway.routes[2].predicates[0]=Path=/v3/api-docs/**
 spring.cloud.gateway.routes[2].filters[0]=RewritePath=/v3/api-docs/(?<segment>.*), /${segment}
 
-# Actuator Configuration
+
+######## Actuator Configuration  #########
 management.endpoints.web.exposure.include=*
-management.endpoint.health.show-details=always
+management.info.git.mode=full
+management.endpoints.web.exposure.include=*
+management.metrics.tags.application=${spring.application.name}
+management.tracing.enabled=false
+management.tracing.sampling.probability=1.0
 
 # Springdoc Swagger UI Configuration
 springdoc.swagger-ui.use-root-path=true
