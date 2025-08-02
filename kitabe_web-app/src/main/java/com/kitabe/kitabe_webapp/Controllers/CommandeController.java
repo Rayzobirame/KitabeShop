@@ -1,56 +1,62 @@
 package com.kitabe.kitabe_webapp.Controllers;
 
-import com.kitabe.kitabe_webapp.catalogue.Produit;
 import com.kitabe.kitabe_webapp.commande.*;
+import com.kitabe.kitabe_webapp.service.SecurityHelper;
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
 
 @Controller
 public class CommandeController {
 
     private final CommandeServiceClient commandeServiceClient;
+    private final SecurityHelper helper;
 
-    public CommandeController(CommandeServiceClient commandeServiceClient) {
+    public CommandeController(CommandeServiceClient commandeServiceClient, SecurityHelper helper) {
         this.commandeServiceClient = commandeServiceClient;
+        this.helper = helper;
     }
 
     @GetMapping("/panier")
-    public String panier(){
+    public String panier() {
         return "panier";
     }
 
-    @PostMapping("/api/commande")
+    @PostMapping("/api/commandes")
     @ResponseBody
-    CommandeConfirmationDTO creerCommande(@Valid @RequestBody CreerCommandeRequest request, @RequestHeader Map<String, ?> headers){
-        return commandeServiceClient.creerCommande(headers, request);
+    CommandeConfirmationDTO creerCommande(@Valid @RequestBody CreerCommandeRequest request) {
+        return commandeServiceClient.creerCommande(getHeaders(), request);
     }
 
-    @GetMapping("/api/commande/{commandeNum}")
+    @GetMapping("/api/commandes/{commandeNum}")
     @ResponseBody
-    CommandeDTO getCommande(@RequestHeader(required = false) Map<String, ?> headers, @PathVariable String commandeNum) {
-        return commandeServiceClient.getCommande(headers, commandeNum);
+    CommandeDTO getCommande( @PathVariable String commandeNum) {
+        return commandeServiceClient.getCommande(getHeaders(), commandeNum);
     }
 
     @GetMapping("/commandes/{commandeNum}")
-    String showCommandeDetails(@PathVariable String commandeNum, Model model){
+    String showCommandeDetails(@PathVariable String commandeNum, Model model) {
         model.addAttribute("commandeNum", commandeNum);
         return "commande_details";
     }
 
-    @GetMapping("/api/commande")
+    @GetMapping("/api/commandes")
     @ResponseBody
-    List<CommandeSommaire> getCommandes(@RequestHeader(required = false) Map<String, ?> headers) {
-        return commandeServiceClient.getCommandes(headers);
+    List<CommandeSommaire> getCommandes() {
+        return commandeServiceClient.getCommandes(getHeaders());
     }
 
     @GetMapping("/commandes")
-    String showCommande(){
+    String showCommande() {
         return "commandes";
+    }
+
+    private Map<String, ?> getHeaders() {
+        String accessToken = helper.getAccessToken();
+        return Map.of("Authorization", "Bearer " + accessToken);
     }
 
 }
