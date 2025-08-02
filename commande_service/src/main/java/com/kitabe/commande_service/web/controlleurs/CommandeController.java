@@ -7,6 +7,7 @@ import com.kitabe.commande_service.domaine.model.CommandeDTO;
 import com.kitabe.commande_service.domaine.model.CommandeSommaire;
 import com.kitabe.commande_service.domaine.model.CreerCommandeRequest;
 import com.kitabe.commande_service.domaine.model.CreerCommandeResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/commande")
+@SecurityRequirement(name = "security_auth")
 public class CommandeController {
     private final CommandeService commandeService;
     private final SecurityService securityService;
