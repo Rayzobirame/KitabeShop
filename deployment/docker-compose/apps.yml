@@ -8,6 +8,9 @@ services:
       - DB_URL=jdbc:postgresql://catalogue_db:5432/postgres
       - DB_USERNAME=postgres
       - DB_PASSWORD=postgres
+      - SWAGGER_API_GATEWAY_URL=http://api-gateway:8989/catalogue
+      - MANAGEMENT_TRACING_ENABLED=true
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411
     ports:
       - "8081:8081"
     restart: unless-stopped
@@ -20,6 +23,8 @@ services:
           memory: 700m
     networks:
       - kitabe_network
+    labels:
+      logging: "promtail"
 
   commande_service:
     image: rayzobirame/kitabe-commande_service
@@ -34,6 +39,7 @@ services:
       - RABBITMQ_PORT=5672
       - RABBITMQ_USERNAME=guest
       - RABBITMQ_PASSWORD=guest
+      - OAUTH2_SERVER_URL=http://keycloak:9191
     ports:
       - "8082:8082"
     restart: unless-stopped
@@ -48,6 +54,8 @@ services:
           memory: 700m
     networks:
       - kitabe_network
+    labels:
+      logging: "promtail"
 
   notification_service:
     image: rayzobirame/kitabe-notification_service
@@ -79,6 +87,8 @@ services:
           memory: 700m
     networks:
       - kitabe_network
+    labels:
+      logging: "promtail"
 
   api-gateway:
     image: rayzobirame/kitabe-api-gateway
@@ -96,6 +106,8 @@ services:
           memory: 700m
     networks:
       - kitabe_network
+    labels:
+      logging: "promtail"
 
   kitabe_web-app:
     image: rayzobirame/kitabe_web-app
@@ -103,15 +115,21 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - KITABE_API_GATEWAY_URL=http://api-gateway:8989
+      - OAUTH2_SERVER_URL=http://keycloak:9191
     ports:
       - "8080:8080"
     restart: unless-stopped
+    depends_on:
+      keycloak:
+        condition: service_started
     deploy:
       resources:
         limits:
           memory: 700m
     networks:
       - kitabe_network
+    labels:
+      logging: "promtail"
 
 networks:
   kitabe_network:
