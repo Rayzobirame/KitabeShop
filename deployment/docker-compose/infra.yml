@@ -1,4 +1,5 @@
 name: 'KitabeShop'
+
 services:
   catalogue_db:
     image: postgres:16-alpine
@@ -91,6 +92,53 @@ services:
     ports:
       - "1025:1025"
       - "8025:8025"
+    networks:
+      - kitabe_network
+
+  keycloak_db:
+    image: postgres:16-alpine
+    container_name: keycloak_db
+    environment:
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=keycloak
+      - POSTGRES_DB=keycloak
+    ports:
+      - "45432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 500m
+    networks:
+      - kitabe_network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2.5
+    command: [ 'start-dev', '--http-port=9191', '--import-realm' ]
+    container_name: keycloak
+    hostname: keycloak
+    volumes:
+      - ./realm_config:/opt/keycloak/data/import
+    environment:
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=admin1234
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://keycloak_db:5432/keycloak
+      - KC_DB_USERNAME=keycloak
+      - KC_DB_PASSWORD=keycloak
+    ports:
+      - "9191:9191"
+    depends_on:
+      keycloak_db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 2g
     networks:
       - kitabe_network
 
