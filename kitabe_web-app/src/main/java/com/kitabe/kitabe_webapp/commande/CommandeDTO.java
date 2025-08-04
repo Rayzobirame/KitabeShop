@@ -1,7 +1,6 @@
 package com.kitabe.kitabe_webapp.commande;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
