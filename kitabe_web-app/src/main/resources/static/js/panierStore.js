@@ -21,13 +21,13 @@ const getPanier = function () {
  */
 const addProduitAuPanier = function (produit) {
     let panier = getPanier();
-    let panierItem = panier.item.find((itemModel) => itemModel.code === produit.code);
+    let panierItem = panier.items.find((itemModel) => itemModel.code === produit.code);
     if (panierItem) {
         panierItem.quantite = parseInt(panierItem.quantite) + 1;
     } else {
         panier.item.push(Object.assign({}, produit, { quantite: 1 }));
     }
-    panier.totalMontant = getPanierTotal();
+    //panier.totalMontant = getPanierTotal();
     localStorage.setItem(KITABESHOP_STATE_KEY, JSON.stringify(panier));
     updatePanierItemCount();
 };
@@ -41,9 +41,9 @@ const addProduitAuPanier = function (produit) {
 const updateProduitQuantite = function (code, quantite) {
     let panier = getPanier();
     if (quantite < 1) {
-        panier.item = panier.item.filter((itemModel) => itemModel.code !== code);
+        panier.items = panier.items.filter((itemModel) => itemModel.code !== code);
     } else {
-        let panierItem = panier.item.find((itemModel) => itemModel.code === code);
+        let panierItem = panier.items.find((itemModel) => itemModel.code === code);
         if (panierItem) {
             panierItem.quantite = parseInt(quantite);
         } else {
@@ -82,12 +82,9 @@ function updatePanierItemCount() {
     let panier = getPanier();
     let count = 0;
     panier.item.forEach((itemModel) => {
-        count += itemModel.quantite;
+        count = count + itemModel.quantite;
     });
-    const element = document.querySelector('#cart-item-count');
-    if (element) {
-        element.textContent = `(${count})`;
-    }
+    $('#cart-item-count').text('(' + count + ')');
 }
 
 /**
@@ -97,95 +94,8 @@ function updatePanierItemCount() {
 function getPanierTotal() {
     let panier = getPanier();
     let totalMontant = 0;
-    panier.item.forEach((item) => {
-        totalMontant += item.prix * item.quantite;
+    panier.items.forEach((item) => {
+        totalMontant = totalMontant + (item.prix * item.quantite);
     });
     return totalMontant;
 }
-
-// Initialisation avec Alpine.js
-document.addEventListener('alpine:init', () => {
-    Alpine.data('panier', () => ({
-        panier: { item: [], totalMontant: 0 },
-        commandeForm: {
-            pseudo: "utilisateur",
-            client: {
-                nom: "Camara",
-                prenom: "Birame",
-                email: "Birame@gmail.com",
-                telephone: "772883172"
-            },
-            livraisonAddresse: {
-                addresse1: "Thiaroye waounde",
-                addresse2: "Grand Dakar",
-                addressePostal: "BP 90",
-                ville: "Waounde",
-                region: "Matam",
-                pays: "Senegal"
-            }
-        },
-
-        init() {
-            updatePanierItemCount();
-            this.loadPanier();
-        },
-
-        loadPanier() {
-            this.panier = getPanier();
-            this.panier.totalMontant = getPanierTotal();
-        },
-
-        updateItemQuantite(code, quantite) {
-            updateProduitQuantite(code, quantite);
-            this.loadPanier();
-        },
-
-        removeFromPanier(code) {
-            deleteProduit(code);
-            this.loadPanier();
-        },
-
-        removePanier() {
-            clearPanier();
-            this.loadPanier();
-        },
-
-        creerCommande() {
-            const commandeItems = this.panier.item.map(item => ({
-                code: item.code,
-                nom: item.nom,
-                prix: item.prix,
-                quantite: item.quantite
-            }));
-
-            let commande = {
-                pseudo: this.commandeForm.pseudo,
-                client: this.commandeForm.client,
-                livraisonAddresse: this.commandeForm.livraisonAddresse,
-                items: commandeItems,
-                totalMontant: this.panier.totalMontant
-            };
-
-            $.ajax({
-                url: '/api/commande',
-                method: 'POST',
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify(commande),
-                success: (resp) => {
-                    console.log("Réponse reçue:", resp);
-                    this.removePanier();
-                    window.location.href = "/commandes/" + resp.commandeNum; // Changé window.location pour window.location.href
-                },
-                error: (xhr, status, error) => {
-                    console.error("Erreur lors de la validation de la commande:", {
-                        status: status,
-                        error: error,
-                        responseText: xhr.responseText,
-                        statusCode: xhr.status
-                    });
-                }
-            });
-        }
-    }));
-});
