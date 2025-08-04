@@ -21,13 +21,10 @@ document.addEventListener('alpine:init', () => {
 
         // Charge les détails de la commande depuis l'API
         getCommandeDetails(commandeNum) {
-            fetch(`/api/commande/${commandeNum}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Récupérer la réponse:", data);
-                    this.commandeDetails = data;
-                })
-                .catch(error => console.error('Erreur lors du chargement des détails:', error));
+            $.getJSON("/api/commandes/"+ commandeNum, (data) => {
+                //console.log("Recuperer reponse commande:", data)
+                this.commandeDetails = data
+            });
         },
         calculateTotal() {
             if (!this.commandeDetails.items || this.commandeDetails.items.length === 0) {
