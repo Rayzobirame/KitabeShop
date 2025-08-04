@@ -19,22 +19,20 @@ public class ProduitController {
     }
 
     @GetMapping
-    String index(){
+    String index() {
         return "redirect:/produits";
     }
 
     @GetMapping("/produits")
-    String produitPage(@RequestParam(name="page", defaultValue="1")int pageNum, Model model){
+    String produitPage(@RequestParam(name = "page", defaultValue = "1") int pageNum, Model model) {
         model.addAttribute("pageNum", pageNum);
         return "produits";
     }
 
     @GetMapping("/api/produits")
     @ResponseBody
-    PagedResult<Produit> produits(@RequestParam(name="page", defaultValue="1")int page, Model model){
+    PagedResult<Produit> produits(@RequestParam(name = "page", defaultValue = "1") int page, Model model) {
         model.addAttribute("pageNum", page);
         return catalogueServiceClient.getProduits(page);
     }
-
-
 }
