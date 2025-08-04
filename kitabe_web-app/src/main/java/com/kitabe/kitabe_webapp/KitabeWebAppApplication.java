@@ -11,5 +11,4 @@ public class KitabeWebAppApplication {
     public static void main(String[] args) {
         SpringApplication.run(KitabeWebAppApplication.class, args);
     }
-
 }
