@@ -147,6 +147,7 @@
                             <BPL_SBOM_DISABLED>true</BPL_SBOM_DISABLED>
                         </env>
                     </image>
+                    <skip>false</skip>
                 </configuration>
                 <executions>
                     <execution>
